@@ -1,0 +1,31 @@
+{
+  "name": "git-promised",
+  "version": "0.0.1",
+  "description": "Work with git using promises",
+  "author": "Maximilian Schüßler <git@mschuessler.org>",
+  "main": "lib/git-promised.js",
+  "script": {
+    "prepublish": "coffee --bare --compile --output lib/ src/*.coffee"
+  },
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maschs/git-promised.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maschs/git-promised/issues"
+  },
+  "homepage": "https://github.com/maschs/git-promised",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "dependencies": {
+    "bluebird": "~2.1.3",
+    "shelljs": "~0.3.0"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.7.1"
+  },
+  "license": "MIT",
+  "keywords": ["git", "promise", "async", "shell"]
+}
