@@ -17,6 +17,7 @@ module.exports = (command, options) ->
     shell.exec command, silent: true, (code, output) ->
       if code isnt 0
         error = new Error("'#{command}' exited with error code #{code}")
+        error.code = code
         error.stdout = output
         reject(error)
       resolve(output)
