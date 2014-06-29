@@ -47,10 +47,22 @@ class Git
       .then (raw) ->
         return new Diff(path, raw)
 
+  refreshIndex: ->
+    options =
+      refresh: true
 
-#  add: ->
-#  commit: ->
-#  diff: ->
+    @cmd 'add', options, '.'
+
+  add: (file) ->
+    file ?= '.'
+    options =
+      A: true
+    @cmd 'add', options, file
+
+  checkoutFile: (file) ->
+    options = {f: true} unless file?
+    @cmd 'checkout', options, file
+
 #  checkout: ->
 #  checkoutFile: ->
 #  cherryPick: ->
