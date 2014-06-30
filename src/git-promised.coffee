@@ -91,7 +91,7 @@ class Git
   # Public: Add file(s) to the index.
   #
   # file - The {String} or {Array} of files to add to index.
-  #        Defaults to '.'.
+  #        Defaults to add all files!
   #
   # Returns: Promise.
   add: (file) ->
