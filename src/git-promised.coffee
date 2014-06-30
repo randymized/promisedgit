@@ -1,5 +1,6 @@
 _       = require 'underscore'
 fs      = require 'fs'
+Promise = require 'bluebird'
 
 git     = require './git'
 Status  = require './models/status'
@@ -44,6 +45,7 @@ class Git
         return Commit.parse(raw)
 
   diff: (path, options={}) ->
+    return Promise.reject('No path given') unless path?
     _.extend options, {'p': true, 'unified': 1, 'no-color': true}
 
     @cmd 'diff', options, path

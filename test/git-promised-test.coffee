@@ -6,7 +6,7 @@ expect = chai.expect
 Git = require '../src/git-promised'
 prepareFixture = require './helper'
 
-describe 'Git', ->
+describe 'Git-Promised', ->
 
   describe '#init()', ->
     git = new Git(temp.mkdirSync('git-promised-test'))
@@ -47,3 +47,42 @@ describe 'Git', ->
           o[1].id.should.eql 'ac657698c7630e3b65f575912aff76bf581f335f'
           o[1].message.should.eql 'Initial commit'
           o[1].parents.should.eql []
+
+  describe '#diff', ->
+    git = new Git(prepareFixture('testDir'))
+    before ->
+      git.init()
+
+    describe 'when we pass a file', ->
+      describe 'when the file exists', ->
+
+        describe 'when the file contains staged diffs', ->
+          it 'resolves withan empty raw diff', ->
+            git.diff('a.coffee').then (o) ->
+              o.raw.should.eql ''
+
+        describe 'when the file contains unstaged diffs', ->
+          it 'resolves withan empty raw diff', ->
+            git.diff('b.coffee').then (o) ->
+              diffRaw = """diff --git a/b.coffee b/b.coffee
+                          index 3463c49..6232e25 100644
+                          --- a/b.coffee
+                          +++ b/b.coffee
+                          @@ -6,3 +6,3 @@ grade = (student) ->
+                             else
+                          -    "C"
+                          +    "F"\n \n#{ }"""
+              o.raw.should.eql diffRaw
+
+        describe 'when the file contains no diffs', ->
+          it 'resolves withan empty raw diff', ->
+            git.diff('c.coffee').then (o) ->
+              o.raw.should.eql ''
+
+      describe 'when the file is not existing', ->
+        it 'rejects the promise', (done) ->
+          git.diff('e.coffee').catch -> done()
+
+    describe 'when we do not pass a file', ->
+      it 'rejects the promise', (done) ->
+        git.diff().catch -> done()
