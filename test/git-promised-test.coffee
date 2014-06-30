@@ -48,7 +48,7 @@ describe 'Git-Promised', ->
           o[1].message.should.eql 'Initial commit'
           o[1].parents.should.eql []
 
-  describe '#diff', ->
+  describe '#diff()', ->
     git = new Git(prepareFixture('testDir'))
     before ->
       git.init()
@@ -57,12 +57,12 @@ describe 'Git-Promised', ->
       describe 'when the file exists', ->
 
         describe 'when the file contains staged diffs', ->
-          it 'resolves withan empty raw diff', ->
+          it 'resolves with an empty raw diff', ->
             git.diff('a.coffee').then (o) ->
               o.raw.should.eql ''
 
         describe 'when the file contains unstaged diffs', ->
-          it 'resolves withan empty raw diff', ->
+          it 'resolves with an empty raw diff', ->
             git.diff('b.coffee').then (o) ->
               diffRaw = """diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
@@ -75,7 +75,7 @@ describe 'Git-Promised', ->
               o.raw.should.eql diffRaw
 
         describe 'when the file contains no diffs', ->
-          it 'resolves withan empty raw diff', ->
+          it 'resolves with an empty raw diff', ->
             git.diff('c.coffee').then (o) ->
               o.raw.should.eql ''
 
