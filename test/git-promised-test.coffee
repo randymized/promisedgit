@@ -7,18 +7,15 @@ Git = require '../src/git-promised'
 prepareFixture = require './helper'
 
 describe 'Git', ->
-  git = null
-  beforeEach ->
-    gitPath = prepareFixture('testDir')
-    git = new Git(gitPath)
 
   describe '#init()', ->
+    git = new Git(temp.mkdirSync('git-promised-test'))
     it 'initializes a new git repo', ->
-      git = new Git(temp.mkdirSync('git-promised-test'))
       git.init().then (o) ->
         o.should.contain 'Initialized empty Git repository in'
 
   describe '#status()', ->
+    git = new Git(prepareFixture('testDir'))
     it 'parses the status and returns an object to use', ->
       git.init().then ->
         git.status().then (o) ->
