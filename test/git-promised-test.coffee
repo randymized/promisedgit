@@ -86,3 +86,33 @@ describe 'Git-Promised', ->
     describe 'when we do not pass a file', ->
       it 'rejects the promise', (done) ->
         git.diff().catch -> done()
+
+  describe '#add()', ->
+
+    git = null
+    beforeEach ->
+      git = new Git(prepareFixture('testDir'))
+
+    describe 'when we pass a file', ->
+
+      describe 'when the file exists', ->
+        it 'adds it to the index', ->
+          git.add('d.coffee')
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(2)
+            o.unstaged.should.have.length(1)
+            o.untracked.should.have.length(0)
+
+      describe 'when the file does not exist', ->
+        it 'rejects the promise', (done) ->
+          git.add('e.coffee').catch -> done()
+
+    describe 'when we pass nothing', ->
+      it 'adds all files', ->
+        git.add()
+        .then -> git.status()
+        .then (o) ->
+          o.staged.should.have.length(3)
+          o.unstaged.should.have.length(0)
+          o.untracked.should.have.length(0)
