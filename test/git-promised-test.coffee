@@ -1,12 +1,44 @@
 temp = require('temp')
 chai = require 'chai'
 chai.should()
-expect = chai.expect
 
 Git = require '../src/git-promised'
 prepareFixture = require './helper'
 
 describe 'Git-Promised', ->
+
+  ##############################################################################
+  # The test fixture we are using contains:                                    #
+  ##############################################################################
+  #                                                                            #
+  #   ## master                                                                #
+  #   M  a.coffee     =>  1 Staged                                             #
+  #    M b.coffee     =>  1 Unstaged                                           #
+  #   ?? d.coffee     =>  1 Untracked                                          #
+  #      c.coffee     =>  1 tracked & unmodified file                          #
+  #                                                                            #
+  ##############################################################################
+  #   Commits:                                                                 #
+  ##############################################################################
+  #                                                                            #
+  #     commit 3393287f69716a01ffb922cd18b41d530d2d6795                        #
+  #     tree 48b770804c8c8530b970ee11bce68c1ba6e798de                          #
+  #     parent ac657698c7630e3b65f575912aff76bf581f335f                        #
+  #     author Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200      #
+  #     committer Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200   #
+  #                                                                            #
+  #         Second commit                                                      #
+  #                                                                            #
+  #----------------------------------------------------------------------------#
+  #                                                                            #
+  #     commit ac657698c7630e3b65f575912aff76bf581f335f                        #
+  #     tree d7cf090a06f92f68f07a3b461595acb5468c73a9                          #
+  #     author Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200      #
+  #     committer Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200   #
+  #                                                                            #
+  #         Initial commit                                                     #
+  #                                                                            #
+  ##############################################################################
 
   describe '#init()', ->
     git = new Git(temp.mkdirSync('git-promised-test'))
@@ -19,19 +51,19 @@ describe 'Git-Promised', ->
     it 'parses the status and returns an object to use', ->
       git.init().then ->
         git.status().then (o) ->
-          o.should.have.deep.property('branch', 'master')
+          o.branch.should.eql 'master'
           # 1 Staged file
           o.staged.should.have.length(1)
-          o.should.have.deep.property('staged[0].path', 'a.coffee')
-          o.should.have.deep.property('staged[0].mode', 'M ')
+          o.staged[0].path.should.eql 'a.coffee'
+          o.staged[0].mode.should.eql 'M '
           # 1 Unstaged file
           o.unstaged.should.have.length(1)
-          o.should.have.deep.property('unstaged[0].path', 'b.coffee')
-          o.should.have.deep.property('unstaged[0].mode', ' M')
+          o.unstaged[0].path.should.eql 'b.coffee'
+          o.unstaged[0].mode.should.eql ' M'
           # 1 Untracked file
           o.untracked.should.have.length(1)
-          o.should.have.deep.property('untracked[0].path', 'd.coffee')
-          o.should.have.deep.property('untracked[0].mode', '??')
+          o.untracked[0].path.should.eql 'd.coffee'
+          o.untracked[0].mode.should.eql '??'
 
   describe '#commits()', ->
     git = new Git(prepareFixture('testDir'))
@@ -54,14 +86,14 @@ describe 'Git-Promised', ->
       git.init()
 
     describe 'when we pass a file', ->
-      describe 'when the file exists', ->
+      describe 'when it exists', ->
 
-        describe 'when the file contains staged diffs', ->
+        describe 'when it contains staged diffs', ->
           it 'resolves with an empty raw diff', ->
             git.diff('a.coffee').then (o) ->
               o.raw.should.eql ''
 
-        describe 'when the file contains unstaged diffs', ->
+        describe 'when it contains unstaged diffs', ->
           it 'resolves with an empty raw diff', ->
             git.diff('b.coffee').then (o) ->
               diffRaw = """diff --git a/b.coffee b/b.coffee
@@ -74,12 +106,12 @@ describe 'Git-Promised', ->
                           +    "F"\n \n#{ }"""
               o.raw.should.eql diffRaw
 
-        describe 'when the file contains no diffs', ->
+        describe 'when it contains no diffs', ->
           it 'resolves with an empty raw diff', ->
             git.diff('c.coffee').then (o) ->
               o.raw.should.eql ''
 
-      describe 'when the file is not existing', ->
+      describe 'when it is not existing', ->
         it 'rejects the promise', (done) ->
           git.diff('e.coffee').catch -> done()
 
