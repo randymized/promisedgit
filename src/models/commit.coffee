@@ -22,11 +22,9 @@ class Commit
         parents.push _.last lines.shift().split(' ')
 
       author_line = lines.shift()
-      console.log author_line
       [author, authoredDate] = @actor author_line
 
       committer_line = lines.shift()
-      console.log committer_line
       [committer, committedDate] = @actor committer_line
 
       gpgsig = []
