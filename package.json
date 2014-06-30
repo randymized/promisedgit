@@ -4,8 +4,9 @@
   "description": "Work with git using promises",
   "author": "Maximilian Schüßler <git@mschuessler.org>",
   "main": "lib/git-promised.js",
-  "script": {
-    "prepublish": "coffee --bare --compile --output lib/ src/*.coffee"
+  "scripts": {
+    "test": "mocha --compilers coffee:'./node_modules/coffee-script/lib/coffee-script/register' --reporter spec",
+    "prepublish": "coffee -o lib -c src"
   },
   "contributors": [],
   "repository": {
@@ -26,7 +27,7 @@
   },
   "devDependencies": {
     "chai": "^1.9.1",
-    "coffee-script": "~1.7.1",
+    "coffee-script": "^1.7.1",
     "mocha": "^1.20.1",
     "temp": "^0.8.0",
     "treeify": "~1.0.1",

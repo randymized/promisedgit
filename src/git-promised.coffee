@@ -22,6 +22,9 @@ class Git
 
     git(command, options, args, @cwd)
 
+  init: ->
+    @cmd 'init'
+
   status: ->
     options =
       z: true
@@ -64,7 +67,6 @@ class Git
     @cmd 'checkout', options, file
 
 #  checkout: ->
-#  checkoutFile: ->
 #  cherryPick: ->
 #  fetch: ->
 #  pull: ->
