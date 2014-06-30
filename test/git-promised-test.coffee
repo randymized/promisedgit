@@ -116,3 +116,30 @@ describe 'Git-Promised', ->
           o.staged.should.have.length(3)
           o.unstaged.should.have.length(0)
           o.untracked.should.have.length(0)
+
+  describe '#checkoutFile()', ->
+
+    git = null
+    beforeEach ->
+      git = new Git(prepareFixture('testDir'))
+
+    describe 'when we pass a file', ->
+      describe 'when it exists', ->
+        it 'checks it out', ->
+          git.checkoutFile('b.coffee')
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length 1
+            o.unstaged.should.have.length 0
+            o.untracked.should.have.length 1
+      describe 'when it does not exist', ->
+        it 'rejects the promise', (done) ->
+          git.checkoutFile('e.coffee').catch -> done()
+    describe 'when we pass nothing', ->
+      it 'checks out all files', ->
+        git.checkoutFile()
+        .then -> git.status()
+        .then (o) ->
+          o.staged.should.have.length 0
+          o.unstaged.should.have.length 0
+          o.untracked.should.have.length 1
