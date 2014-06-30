@@ -14,7 +14,6 @@ module.exports = (command, options, args, cwd) ->
 
   args ?= []
   args = args.join ' ' if args instanceof Array
-  args = "-- #{args}" if args.length > 0
 
   command = "#{command} #{options} #{args}"
   new Promise (resolve, reject) ->
