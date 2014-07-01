@@ -185,7 +185,7 @@ describe 'Git-Promised', ->
       git = new Git(prepareFixture('testDir'))
       git.init()
 
-    describe "when we reset without specific treeish (defaults to HEAD)", ->
+    describe "when we reset without passing a treeish (defaults to HEAD)", ->
       describe "when we use no or the --mixed flag", ->
         it "removes the file from index, leaves it in working tree", ->
           git.reset()
