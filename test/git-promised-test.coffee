@@ -1,6 +1,4 @@
 temp = require('temp')
-chai = require 'chai'
-chai.should()
 
 Git = require '../src/git-promised'
 prepareFixture = require './helper'
@@ -179,3 +177,66 @@ describe 'Git-Promised', ->
           o.staged.should.have.length(0)
           o.unstaged.should.have.length(0)
           o.untracked.should.have.length(1)
+
+  describe '#reset()', ->
+
+    git = null
+    beforeEach ->
+      git = new Git(prepareFixture('testDir'))
+      git.init()
+
+    describe "when we reset without specific treeish (defaults to HEAD)", ->
+      describe "when we use no or the --mixed flag", ->
+        it "removes the file from index, leaves it in working tree", ->
+          git.reset()
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(2)
+            o.untracked.should.have.length(1)
+
+      describe "when we use the --soft flag", ->
+        it "leaves the added file in the index", ->
+          git.reset({soft: true})
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(1)
+            o.unstaged.should.have.length(1)
+            o.untracked.should.have.length(1)
+
+      describe "when we use the --hard flag", ->
+        it "removes the file from index and working tree", ->
+          git.reset({hard: true})
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(0)
+            o.untracked.should.have.length(1)
+
+    describe "when we reset to a specific treeish", ->
+      describe "when we use no or the --mixed flag", ->
+        it "resets to HEAD~1, changes stay in the working tree", ->
+          git.reset('HEAD~1')
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(2)
+            o.untracked.should.have.length(1)
+
+      describe "when we use the --soft flag", ->
+        it "resets to HEAD~1, changes stay in the index and working tree", ->
+          git.reset('HEAD~1', {soft: true})
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(1)
+            o.unstaged.should.have.length(1)
+            o.untracked.should.have.length(1)
+
+      describe "when we use the --hard flag", ->
+        it "resets to HEAD~1, all changes get discarded completely", ->
+          git.reset('HEAD~1', {hard: true})
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(0)
+            o.untracked.should.have.length(1)

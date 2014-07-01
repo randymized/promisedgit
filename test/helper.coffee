@@ -3,6 +3,10 @@ path   = require 'path'
 wrench = require 'wrench'
 temp   = require('temp').track()
 
+chai = require 'chai'
+chai.should()
+chai.use require("chai-as-promised")
+
 module.exports = (fixtureName) ->
   return throw new Error 'No fixtureName given!' unless fixtureName?
 

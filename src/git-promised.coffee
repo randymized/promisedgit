@@ -109,3 +109,18 @@ class Git
   checkoutFile: (file) ->
     options = {f: true} unless file?
     @cmd 'checkout', options, file
+
+  # Public: Reset repo to treeish.
+  #
+  # treeish - The {String} to reset to. (Default: 'HEAD')
+  # options - The {Object} with flags for git CLI.
+  #   :soft  - {Boolean)
+  #   :mixed - {Boolean) When no other option given git defaults to 'mixed'.
+  #   :hard  - {Boolean)
+  #   :merge - {Boolean)
+  #   :keep  - {Boolean)
+  #
+  # Returns: Promise.
+  reset: (treeish='HEAD', options={}) ->
+    [treeish, options] = ['HEAD', treeish] if typeof(treeish) is 'object'
+    @cmd 'reset', options, treeish
