@@ -67,7 +67,7 @@ class Git
 
   # Public: Get the diff for path.
   #
-  # path    - The {String} path of the file to diff.
+  # file    - The {String} path of the file to diff.
   # options - The {Object} with options git-diff.
   #
   # Returns: Promise resolving to {::Diff}
@@ -124,3 +124,16 @@ class Git
   reset: (treeish='HEAD', options={}) ->
     [treeish, options] = ['HEAD', treeish] if typeof(treeish) is 'object'
     @cmd 'reset', options, treeish
+
+  # Public: Remove given file(s) from the index but leave it/them in the
+  #         working tree.
+  #
+  # file - The {String} or {Array} of files to unstage.
+  #
+  # Returns: `undefined`
+  unstage: (file) ->
+    return Promise.reject('No file given') unless file?
+    file = [file] unless file instanceof Array
+    file.unshift 'HEAD', '--'
+
+    @cmd 'reset', file

@@ -244,3 +244,67 @@ describe 'Git-Promised', ->
     describe 'when we reset to an invalid treeish', ->
       it 'rejects the promise', ->
         git.reset('pusemuckel').should.be.rejected
+
+  describe '#unstage()', ->
+
+    git = null
+    beforeEach ->
+      git = new Git(prepareFixture('testDir'))
+
+    describe 'when we pass a file', ->
+
+      describe 'when it exists', ->
+
+        describe 'when it is staged', ->
+          it 'unstages the file', ->
+            git.unstage('a.coffee')
+            .then -> git.status()
+            .then (o) ->
+              o.staged.should.have.length(0)
+              o.unstaged.should.have.length(2)
+              o.untracked.should.have.length(1)
+
+        describe 'when it is not staged', ->
+          it 'changes nothing', ->
+            git.unstage('b.coffee')
+            .then -> git.status()
+            .then (o) ->
+              o.staged.should.have.length(1)
+              o.unstaged.should.have.length(1)
+              o.untracked.should.have.length(1)
+
+      describe 'when it does not exist', ->
+        it 'changes nothing', ->
+          git.unstage('e.coffee')
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(1)
+            o.unstaged.should.have.length(1)
+            o.untracked.should.have.length(1)
+
+    describe 'when we pass an array of files', ->
+
+      beforeEach ->
+        git.add('b.coffee')
+
+      describe 'when they all exist', ->
+        it 'unstages the staged files', ->
+          git.unstage ['a.coffee', 'b.coffee', 'c.coffee', 'd.coffee']
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(2)
+            o.untracked.should.have.length(1)
+
+      describe 'when some or all of them do not exist', ->
+        it 'unstages the staged files', ->
+          git.unstage ['a.coffee', 'b.coffee', 'c.coffee', 'e.coffee']
+          .then -> git.status()
+          .then (o) ->
+            o.staged.should.have.length(0)
+            o.unstaged.should.have.length(2)
+            o.untracked.should.have.length(1)
+
+    describe 'when we pass nothing', ->
+      it 'rejects the promise', ->
+        git.unstage().should.be.rejected
