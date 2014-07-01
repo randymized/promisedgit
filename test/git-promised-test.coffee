@@ -114,12 +114,12 @@ describe 'Git-Promised', ->
               o.raw.should.eql ''
 
       describe 'when it is not existing', ->
-        it 'rejects the promise', (done) ->
-          git.diff('e.coffee').catch -> done()
+        it 'rejects the promise', ->
+          git.diff('e.coffee').should.be.rejected
 
     describe 'when we do not pass a file', ->
-      it 'rejects the promise', (done) ->
-        git.diff().catch -> done()
+      it 'rejects the promise', ->
+        git.diff().should.be.rejected
 
   describe '#add()', ->
 
@@ -139,8 +139,8 @@ describe 'Git-Promised', ->
             o.untracked.should.have.length(0)
 
       describe 'when the file does not exist', ->
-        it 'rejects the promise', (done) ->
-          git.add('e.coffee').catch -> done()
+        it 'rejects the promise', ->
+          git.add('e.coffee').should.be.rejected
 
     describe 'when we pass nothing', ->
       it 'adds all files', ->
@@ -167,8 +167,8 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
       describe 'when it does not exist', ->
-        it 'rejects the promise', (done) ->
-          git.checkoutFile('e.coffee').catch -> done()
+        it 'rejects the promise', ->
+          git.checkoutFile('e.coffee').should.be.rejected
     describe 'when we pass nothing', ->
       it 'checks out all files', ->
         git.checkoutFile()
@@ -240,3 +240,7 @@ describe 'Git-Promised', ->
             o.staged.should.have.length(0)
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
+
+    describe 'when we reset to an invalid treeish', ->
+      it 'rejects the promise', ->
+        git.reset('pusemuckel').should.be.rejected
