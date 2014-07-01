@@ -89,12 +89,17 @@ describe 'Git-Promised', ->
       describe 'when it exists', ->
 
         describe 'when it contains staged diffs', ->
-          it 'resolves with an empty raw diff', ->
-            git.diff('a.coffee').then (o) ->
-              o.raw.should.eql ''
+          describe 'when we set no extra options', ->
+            it 'resolves with an empty raw diff', ->
+              git.diff('a.coffee').then (o) ->
+                o.raw.should.eql ''
+          describe 'when we add the --cached flag', ->
+            it 'resolves with a Diff object', ->
+              git.diff('a.coffee', cached: true).then (o) ->
+                o.raw.should.be.ok.and.not.equal ''
 
         describe 'when it contains unstaged diffs', ->
-          it 'resolves with an empty raw diff', ->
+          it 'resolves with a Diff object', ->
             git.diff('b.coffee').then (o) ->
               diffRaw = """diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
