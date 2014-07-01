@@ -71,13 +71,13 @@ class Git
   # options - The {Object} with options git-diff.
   #
   # Returns: Promise resolving to {::Diff}
-  diff: (path, options={}) ->
-    return Promise.reject('No path given') unless path?
+  diff: (file, options={}) ->
+    return Promise.reject('No file given') unless file?
     _.extend options, {'p': true, 'unified': 1, 'no-color': true}
 
-    @cmd 'diff', options, path
+    @cmd 'diff', options, file
       .then (raw) ->
-        return new Diff(path, raw)
+        return new Diff(file, raw)
 
   # Public: Refresh the git index.
   #
