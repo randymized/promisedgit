@@ -7,38 +7,38 @@ prepareFixture = require './helper'
 
 describe 'Git-Promised', ->
 
-  ##############################################################################
-  # The test fixture we are using contains:                                    #
-  ##############################################################################
-  #                                                                            #
-  #   ## master                                                                #
-  #   M  a.coffee     =>  1 Staged                                             #
-  #    M b.coffee     =>  1 Unstaged                                           #
-  #   ?? d.coffee     =>  1 Untracked                                          #
-  #      c.coffee     =>  1 tracked & unmodified file                          #
-  #                                                                            #
-  ##############################################################################
-  #   Commits:                                                                 #
-  ##############################################################################
-  #                                                                            #
-  #     commit 3393287f69716a01ffb922cd18b41d530d2d6795                        #
-  #     tree 48b770804c8c8530b970ee11bce68c1ba6e798de                          #
-  #     parent ac657698c7630e3b65f575912aff76bf581f335f                        #
-  #     author Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200      #
-  #     committer Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200   #
-  #                                                                            #
-  #         Second commit                                                      #
-  #                                                                            #
-  #----------------------------------------------------------------------------#
-  #                                                                            #
-  #     commit ac657698c7630e3b65f575912aff76bf581f335f                        #
-  #     tree d7cf090a06f92f68f07a3b461595acb5468c73a9                          #
-  #     author Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200      #
-  #     committer Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200   #
-  #                                                                            #
-  #         Initial commit                                                     #
-  #                                                                            #
-  ##############################################################################
+  #############################################################################
+  # The test fixture we are using contains:                                   #
+  #############################################################################
+  #                                                                           #
+  #   ## master                                                               #
+  #   M  a.coffee     =>  1 Staged                                            #
+  #    M b.coffee     =>  1 Unstaged                                          #
+  #   ?? d.coffee     =>  1 Untracked                                         #
+  #      c.coffee     =>  1 tracked & unmodified file                         #
+  #                                                                           #
+  #############################################################################
+  #   Commits:                                                                #
+  #############################################################################
+  #                                                                           #
+  #     commit 3393287f69716a01ffb922cd18b41d530d2d6795                       #
+  #     tree 48b770804c8c8530b970ee11bce68c1ba6e798de                         #
+  #     parent ac657698c7630e3b65f575912aff76bf581f335f                       #
+  #     author Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200     #
+  #     committer Maximilian Schüßler <git@mschuessler.org> 1404161627 +0200  #
+  #                                                                           #
+  #         Second commit                                                     #
+  #                                                                           #
+  #---------------------------------------------------------------------------#
+  #                                                                           #
+  #     commit ac657698c7630e3b65f575912aff76bf581f335f                       #
+  #     tree d7cf090a06f92f68f07a3b461595acb5468c73a9                         #
+  #     author Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200     #
+  #     committer Maximilian Schüßler <git@mschuessler.org> 1404061376 +0200  #
+  #                                                                           #
+  #         Initial commit                                                    #
+  #                                                                           #
+  #############################################################################
 
   describe '#init()', ->
     git = new Git(temp.mkdirSync('git-promised-test'))
