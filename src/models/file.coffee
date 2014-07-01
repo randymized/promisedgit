@@ -7,55 +7,32 @@ class File
     @parseMode()
 
   update: (@mode) ->
-    parseMode()
+    @parseMode()
 
   parseMode: ->
-    @resetStatus()
     @modeIndex       = @mode.substring(0, 1)
     @modeWorkingTree = @mode.substring(1, 2)
 
-    switch @modeIndex
-      when 'A' then @indexAdded    = true
-      when 'C' then @indexCopied   = true
-      when 'D' then @indexDeleted  = true
-      when 'M' then @indexModified = true
-      when 'R' then @indexRenamed  = true
-      when '?' then @sUntracked    = true
-    switch @modeWorkingTree
-      when 'A' then @workingTreeAdded    = true
-      when 'C' then @workingTreeCopied   = true
-      when 'D' then @workingTreeDeleted  = true
-      when 'M' then @workingTreeModified = true
-      when 'R' then @workingTreeRenamed  = true
-      when '?' then @sUntracked          = true
-
-  resetStatus: ->
-    @indexAdded          = false
-    @indexCopied         = false
-    @indexDeleted        = false
-    @indexModified       = false
-    @indexRenamed        = false
-    @workingTreeAdded    = false
-    @workingTreeCopied   = false
-    @workingTreeDeleted  = false
-    @workingTreeModified = false
-    @workingTreeRenamed  = false
-    @sUntracked          = false
-
   added: ->
-    @indexAdded or @workingTreeAdded
+    @mode.contains('A')
+
   copied: ->
-    @indexCopied or @workingTreeCopied
+    @mode.contains('C')
+
   deleted: ->
-    @indexDeleted or @workingTreeDeleted
+    @mode.contains('D')
+
   modified: ->
-    @indexModified or @workingTreeModified
+    @mode.contains('M')
+
   renamed: ->
-    @indexRenamed or @workingTreeRenamed
+    @mode.contains('R')
 
   staged: ->
-    @indexAdded or @indexCopied or @indexDeleted or @indexModified or @indexRenamed
+    /[ACDMR]/g.test @modeIndex
+
   unstaged: ->
-    @workingTreeAdded or @workingTreeCopied or @workingTreeDeleted or @workingTreeModified or @workingTreeRenamed
+    /[ACDMR]/g.test @modeWorkingTree
+
   untracked: ->
-    @sUntracked
+    @mode is '??'
