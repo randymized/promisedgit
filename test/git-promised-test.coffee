@@ -89,10 +89,9 @@ describe 'Git-Promised', ->
       describe 'when it exists', ->
 
         describe 'when it contains staged diffs', ->
-          describe 'when we set no extra options', ->
-            it 'resolves with an empty raw diff', ->
-              git.diff('a.coffee').then (o) ->
-                o.raw.should.eql ''
+          it 'resolves with an empty raw diff', ->
+            git.diff('a.coffee').then (o) ->
+              o.raw.should.eql ''
           describe 'when we add the --cached flag', ->
             it 'resolves with a Diff object', ->
               git.diff('a.coffee', cached: true).then (o) ->
@@ -166,9 +165,9 @@ describe 'Git-Promised', ->
           git.checkoutFile('b.coffee')
           .then -> git.status()
           .then (o) ->
-            o.staged.should.have.length 1
-            o.unstaged.should.have.length 0
-            o.untracked.should.have.length 1
+            o.staged.should.have.length(1)
+            o.unstaged.should.have.length(0)
+            o.untracked.should.have.length(1)
       describe 'when it does not exist', ->
         it 'rejects the promise', (done) ->
           git.checkoutFile('e.coffee').catch -> done()
@@ -177,6 +176,6 @@ describe 'Git-Promised', ->
         git.checkoutFile()
         .then -> git.status()
         .then (o) ->
-          o.staged.should.have.length 0
-          o.unstaged.should.have.length 0
-          o.untracked.should.have.length 1
+          o.staged.should.have.length(0)
+          o.unstaged.should.have.length(0)
+          o.untracked.should.have.length(1)

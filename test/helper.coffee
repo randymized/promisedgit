@@ -1,7 +1,5 @@
-_      = require 'underscore'
 fs     = require 'fs'
 path   = require 'path'
-shell  = require 'shelljs'
 wrench = require 'wrench'
 temp   = require('temp').track()
 
