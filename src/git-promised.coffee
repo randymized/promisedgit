@@ -1,14 +1,17 @@
-_       = require 'underscore'
-fs      = require 'fs'
-Promise = require 'bluebird'
+_            = require 'underscore'
+fs           = require 'fs'
+path         = require 'path'
+Promise      = require 'bluebird'
+{Collection} = require 'backbone'
 
-git     = require './git'
-Status  = require './models/status'
-Commit  = require './models/commit'
-Diff    = require './models/diff'
+git = require './git'
+{Status, Commit, Diff, File, Treeish} = require './models'
 
 module.exports=
 class Git
+
+  files: new Collection()
+  refs:  new Collection()
 
   # Public: Constructor
   #
@@ -16,7 +19,8 @@ class Git
   constructor: (cwd) ->
     @cwd = cwd if cwd?
     @cwd ?= process.cwd()
-    throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
+    return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
+    @isGitRepo = true
 
   # Public: Run git command.
   #
@@ -83,13 +87,17 @@ class Git
 
       @status().bind(this).then (o) ->
         paths = if 'cached' of options
-          o.staged.map ({path}) -> path
+          o.staged.map ({filePath}) -> filePath
         else
-          o.unstaged.map ({path}) -> path
+          o.unstaged.map ({filePath}) -> filePath
         @diff(paths, options)
     else
       if file instanceof Array
-        Promise.all (@diff(path, options) for path in file)
+        diffs = for filePath in file
+          @diff(filePath, options)
+          .then (diff) -> diff
+          .catch -> null
+        Promise.all(diffs).then(_.compact)
       else
         _.extend options, {'p': true, 'unified': 1, 'no-color': true}
         @cmd 'diff', options, file
@@ -117,6 +125,9 @@ class Git
     options =
       A: true
     @cmd 'add', options, file
+
+  checkout: (treeish='HEAD', options={}) ->
+    @cmd 'checkout', options, treeish
 
   # Public: Checkout file.
   #
@@ -154,4 +165,33 @@ class Git
     file = [file] unless file instanceof Array
     file.unshift 'HEAD', '--'
 
-    @cmd 'reset', file
+    @cmd 'reset', {}, file
+
+  # Public: Wrapper for git-show.
+  #         If you pass treeish and file you get the file@treeish.
+  #         If you only pass treeish you get the treeish.
+  #         If you only pass file you get the changes made by HEAD to file.
+  #
+  # treeish - The {String} or {::Treeish} to show.
+  # file    - The {String} or {::File} to show.
+  # options - The {Object} options.
+  #
+  # Returns: Promise.
+  show: (treeish, file, options) ->
+    [treeish, file] = [file, treeish] if file instanceof Treeish
+    [treeish, file] = [file, treeish] if treeish instanceof File
+    if treeish instanceof Object and not (typeof(treeish) is 'string') and not options?
+      [treeish, options] = [options, treeish] unless treeish instanceof Treeish
+    if file instanceof Object and not (typeof(file) is 'string') and not options?
+      [file, options] = [options, file] unless file instanceof File
+
+    if not file? and (typeof(treeish) is 'string')
+      [treeish, file] = [file, treeish] if fs.existsSync(path.join(@cwd, treeish))
+
+    treeish = treeish.ref if treeish instanceof Treeish
+    treeish = '' unless typeof treeish is 'string'
+    file = file.filePath if file instanceof File
+    file = '' unless typeof file is 'string'
+    file = ":#{file}" unless file.length is 0
+
+    @cmd 'show', options, "#{treeish}#{file}"
