@@ -87,9 +87,9 @@ describe 'Git-Promised', ->
       describe 'when it exists', ->
 
         describe 'when it contains staged diffs', ->
-          it 'resolves with an empty raw diff', ->
-            git.diff('a.coffee').then (o) ->
-              o.raw.should.eql ''
+          it 'rejects the promise', ->
+            git.diff('a.coffee').should.be.rejected
+
           describe 'when we add the --cached flag', ->
             it 'resolves with a Diff object', ->
               git.diff('a.coffee', cached: true).then (o) ->
@@ -109,17 +109,25 @@ describe 'Git-Promised', ->
               o.raw.should.eql diffRaw
 
         describe 'when it contains no diffs', ->
-          it 'resolves with an empty raw diff', ->
-            git.diff('c.coffee').then (o) ->
-              o.raw.should.eql ''
+          it 'rejects the promise', ->
+            git.diff('c.coffee').should.be.rejected
 
       describe 'when it is not existing', ->
-        it 'rejects the promise', ->
-          git.diff('e.coffee').should.be.rejected
+        git.diff('e.coffee').should.be.rejected
 
     describe 'when we do not pass a file', ->
-      it 'rejects the promise', ->
-        git.diff().should.be.rejected
+      it 'returns all diffs in workingTree', ->
+        git.diff().then (o) ->
+          o.should.have.length(1)
+          o[0].path.should.eql 'b.coffee'
+          o[0].chunks.should.have.length(1)
+
+      describe 'when we set the --cached flag', ->
+        it 'returns all diffs in index', ->
+          git.diff({cached: true}).then (o) ->
+            o.should.have.length(1)
+            o[0].path.should.eql 'a.coffee'
+            o[0].chunks.should.have.length(1)
 
   describe '#add()', ->
 

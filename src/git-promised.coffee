@@ -71,13 +71,27 @@ class Git
   # options - The {Object} with options git-diff.
   #
   # Returns: Promise resolving to {::Diff}
-  diff: (file, options={}) ->
-    return Promise.reject('No file given') unless file?
-    _.extend options, {'p': true, 'unified': 1, 'no-color': true}
 
-    @cmd 'diff', options, file
-      .then (raw) ->
-        return new Diff(file, raw)
+  diff: (file, options={}) ->
+    if (typeof(file) isnt 'string') and not (file instanceof Array)
+      options = file
+      options ?= {}
+
+      @status().bind(this).then (o) ->
+        paths = if 'cached' of options
+          o.staged.map ({path}) -> path
+        else
+          o.unstaged.map ({path}) -> path
+        @diff(paths, options)
+    else
+      if file instanceof Array
+        Promise.all (@diff(path, options) for path in file)
+      else
+        _.extend options, {'p': true, 'unified': 1, 'no-color': true}
+        @cmd 'diff', options, file
+          .then (raw) ->
+            return throw new Error("'#{file}' has no diffs! Forgot '--cached'?") unless raw?
+            return new Diff(file, raw)
 
   # Public: Refresh the git index.
   #
@@ -130,7 +144,7 @@ class Git
   #
   # file - The {String} or {Array} of files to unstage.
   #
-  # Returns: `undefined`
+  # Returns: Promise.
   unstage: (file) ->
     return Promise.reject('No file given') unless file?
     file = [file] unless file instanceof Array
