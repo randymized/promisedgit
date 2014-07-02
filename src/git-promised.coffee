@@ -67,10 +67,14 @@ class Git
 
   # Public: Get the diff for path.
   #
-  # file    - The {String} path of the file to diff.
+  # file    - The {String} (or multiple in an {Array}) with the path of the file
+  #           to diff.
+  #           If you pass no file path(s), it will diff all modified files.
   # options - The {Object} with options git-diff.
+  #   :cached - {Boolean} Show the diff from index.
   #
-  # Returns: Promise resolving to {::Diff}
+  # Returns: Promise resolving to {::Diff} if you passed a single path or to an
+  #          {Array} of {::Diffs} if you passed an {Array} or nothing for file.
 
   diff: (file, options={}) ->
     if (typeof(file) isnt 'string') and not (file instanceof Array)
