@@ -52,15 +52,15 @@ describe 'Git-Promised', ->
           o.branch.should.eql 'master'
           # 1 Staged file
           o.staged.should.have.length(1)
-          o.staged[0].path.should.eql 'a.coffee'
+          o.staged[0].filePath.should.eql 'a.coffee'
           o.staged[0].mode.should.eql 'M '
           # 1 Unstaged file
           o.unstaged.should.have.length(1)
-          o.unstaged[0].path.should.eql 'b.coffee'
+          o.unstaged[0].filePath.should.eql 'b.coffee'
           o.unstaged[0].mode.should.eql ' M'
           # 1 Untracked file
           o.untracked.should.have.length(1)
-          o.untracked[0].path.should.eql 'd.coffee'
+          o.untracked[0].filePath.should.eql 'd.coffee'
           o.untracked[0].mode.should.eql '??'
 
   describe '#commits()', ->
@@ -119,15 +119,40 @@ describe 'Git-Promised', ->
       it 'returns all diffs in workingTree', ->
         git.diff().then (o) ->
           o.should.have.length(1)
-          o[0].path.should.eql 'b.coffee'
+          o[0].filePath.should.eql 'b.coffee'
           o[0].chunks.should.have.length(1)
 
       describe 'when we set the --cached flag', ->
         it 'returns all diffs in index', ->
           git.diff({cached: true}).then (o) ->
             o.should.have.length(1)
-            o[0].path.should.eql 'a.coffee'
+            o[0].filePath.should.eql 'a.coffee'
             o[0].chunks.should.have.length(1)
+
+    describe 'when we pass multiple files', ->
+      describe 'when only some of them contain diffs', ->
+        it 'returns Diff-Objects for the files that have diffs', ->
+          git.diff(['a.coffee', 'b.coffee']).then (o) ->
+            o.should.have.length(1)
+            diffRaw = """diff --git a/b.coffee b/b.coffee
+                          index 3463c49..6232e25 100644
+                          --- a/b.coffee
+                          +++ b/b.coffee
+                          @@ -6,3 +6,3 @@ grade = (student) ->
+                             else
+                          -    "C"
+                          +    "F"\n \n#{ }"""
+            o[0].raw.should.eql diffRaw
+
+      describe 'when none of them contain diffs', ->
+        it 'returns an empty array', ->
+          git.diff(['a.coffee', 'c.coffee']).then (o) ->
+            o.should.have.length(0)
+
+      describe 'when some of them do not exist', ->
+        it 'returns an array with the diffs of the existing files', ->
+          git.diff(['b.coffee', 'c.coffee', 'e.coffee']).then (o) ->
+            o.should.have.length(1)
 
   describe '#add()', ->
 

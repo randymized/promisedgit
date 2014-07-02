@@ -3,7 +3,7 @@ fs = require 'fs'
 module.exports=
 class File
 
-  constructor: (@path, @mode) ->
+  constructor: (@filePath, @mode) ->
     @parseMode()
 
   update: (@mode) ->

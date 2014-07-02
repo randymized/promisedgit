@@ -195,3 +195,9 @@ class Git
     file = ":#{file}" unless file.length is 0
 
     @cmd 'show', options, "#{treeish}#{file}"
+
+  revert: (treeish, options={}) ->
+    return throw new Error('No treeish passed!') unless treeish?
+    treeish = treeish.ref if treeish instanceof Treeish
+
+    @cmd 'revert', options, treeish
