@@ -34,7 +34,9 @@ pushDir = (cwd) ->
 options_to_argv = (options) ->
   argv = []
   for key, val of options
-    if key.length == 1
+    if key is 'treeish'
+      argv.push val
+    else if key.length == 1
       if val == true
         argv.push "-#{key}"
       else if val == false

@@ -47,7 +47,6 @@ class Commit
       while lines[0]? && !lines[0].length
         lines.shift()
 
-      commit = new Commit()
       commits.push new Commit(
         id
         parents

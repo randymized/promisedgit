@@ -5,7 +5,7 @@ Promise      = require 'bluebird'
 {Collection} = require 'backbone'
 
 git = require './git'
-{Status, Commit, Diff, File, Treeish} = require './models'
+{Commit, Diff, File, Status, Treeish} = require './models'
 
 module.exports=
 class Git
@@ -51,7 +51,7 @@ class Git
       b: true
 
     @cmd 'status', options
-      .then (raw) -> Status.parse(raw)
+      .bind(this).then (raw) -> Status.parse(raw, this)
 
   # Public: Get an array of commits from the current repo.
   #
@@ -69,7 +69,7 @@ class Git
       .then (raw) ->
         return Commit.parse(raw)
 
-  # Public: Get the diff for path.
+  # Public: Get the diff for a file.
   #
   # file    - The {String} (or multiple in an {Array}) with the path of the file
   #           to diff.
@@ -81,29 +81,28 @@ class Git
   #          {Array} of {::Diffs} if you passed an {Array} or nothing for file.
 
   diff: (file, options={}) ->
-    if (typeof(file) isnt 'string') and not (file instanceof Array)
-      options = file
-      options ?= {}
-
+    if not (file instanceof File) and not (typeof(file) is 'string') and not Array.isArray(file)
+      options = file if file?
+      file = null
+    if not ('treeish' of options) and not file?
       @status().bind(this).then (o) ->
         paths = if 'cached' of options
           o.staged.map ({filePath}) -> filePath
         else
           o.unstaged.map ({filePath}) -> filePath
         @diff(paths, options)
+    else if file instanceof Array
+      diffs = for filePath in file
+        @diff(filePath, options)
+        .then (diff) -> diff
+        .catch -> null
+      Promise.all(diffs).then(_.compact)
     else
-      if file instanceof Array
-        diffs = for filePath in file
-          @diff(filePath, options)
-          .then (diff) -> diff
-          .catch -> null
-        Promise.all(diffs).then(_.compact)
-      else
-        _.extend options, {'p': true, 'unified': 1, 'no-color': true}
-        @cmd 'diff', options, file
-          .then (raw) ->
-            return throw new Error("'#{file}' has no diffs! Forgot '--cached'?") unless raw?
-            return new Diff(file, raw)
+      _.extend options, {'p': true, 'unified': 1, 'no-color': true}
+      @cmd 'diff', options, file
+        .then (raw) ->
+          return throw new Error("'#{file}' has no diffs! Forgot '--cached'?") unless raw?
+          return new Diff(file, raw)
 
   # Public: Refresh the git index.
   #
@@ -151,7 +150,9 @@ class Git
   #
   # Returns: Promise.
   reset: (treeish='HEAD', options={}) ->
+    treeish = treeish.ref if treeish instanceof Treeish
     [treeish, options] = ['HEAD', treeish] if typeof(treeish) is 'object'
+
     @cmd 'reset', options, treeish
 
   # Public: Remove given file(s) from the index but leave it/them in the
@@ -195,9 +196,3 @@ class Git
     file = ":#{file}" unless file.length is 0
 
     @cmd 'show', options, "#{treeish}#{file}"
-
-  revert: (treeish, options={}) ->
-    return throw new Error('No treeish passed!') unless treeish?
-    treeish = treeish.ref if treeish instanceof Treeish
-
-    @cmd 'revert', options, treeish

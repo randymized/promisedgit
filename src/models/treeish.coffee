@@ -1,5 +1,5 @@
 {Model} = require 'backbone'
-{File}  = require './'
+{Diff, File}  = require './'
 
 module.exports =
 class Treeish extends Model
@@ -12,13 +12,12 @@ class Treeish extends Model
     @repo.checkout(@ref)
 
   diff: (treeish='HEAD') ->
-    @repo.diff(null, "#{@ref}..#{treeish}")
-
-  diffTo: (treeish) ->
-    @diff(treeish)
+    options = {treeish: "#{@ref}..#{treeish}"}
+    @repo.diff(options)
 
   diffFrom: (treeish='HEAD') ->
-    @repo.diff(null, "#{treeish}..#{@ref}")
+    options = {treeish: "#{treeish}..#{@ref}"}
+    @repo.diff(options)
 
   getFile: (file) ->
     return throw new Error('No valid file!') unless file?
@@ -26,5 +25,7 @@ class Treeish extends Model
     @repo(@ref, file)
 
   reset: (mode) ->
-    options = if mode? then {"#{mode}": true} else {}
-    @cmd 'reset', options, @ref
+    options = {}
+    options[mode] = true if mode?
+
+    @repo.cmd 'reset', options, @ref

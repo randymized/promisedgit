@@ -1,16 +1,19 @@
+{Model} = require 'backbone'
 fs = require 'fs'
 
 module.exports=
-class File
+class File extends Model
 
-  constructor: (@filePath, @mode) ->
+  constructor: (@filePath, @repo, @mode) ->
+    throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
+    throw new Error('No valid filePath!!!') unless (typeof(@filePath) is 'string')
     @parseMode()
 
   update: (@mode) ->
     @parseMode()
 
   parseMode: ->
-    @modeIndex       = @mode.substring(0, 1)
+    @modeIndex = @mode.substring(0, 1)
     @modeWorkingTree = @mode.substring(1, 2)
 
   added: ->

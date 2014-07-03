@@ -8,7 +8,7 @@ class Status
     @unstaged  ?= []
     @untracked ?= []
 
-  @parse: (raw) ->
+  @parse: (raw, repo) ->
     lineSeparator = if raw.indexOf('\u0000') isnt -1 then '\u0000' else '\n'
     lines = raw.split(lineSeparator)
 
@@ -22,7 +22,7 @@ class Status
     for line in lines when line isnt ''
       mode = line.substring(0, 2)
       path = line.substring(3)
-      file = new File(path, mode)
+      file = new File(path, repo, mode)
       staged.push file if file.staged()
       unstaged.push file if file.unstaged()
       untracked.push file if file.untracked()
