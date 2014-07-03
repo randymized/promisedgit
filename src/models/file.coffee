@@ -4,7 +4,7 @@ fs = require 'fs'
 module.exports=
 class File extends Model
 
-  constructor: (@filePath, @repo, @mode) ->
+  constructor: (@filePath, @repo, @mode='  ') ->
     throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
     throw new Error('No valid filePath!!!') unless (typeof(@filePath) is 'string')
     @parseMode()
