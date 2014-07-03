@@ -170,7 +170,7 @@ class Git
 
   # Public: Wrapper for git-show.
   #         If you pass treeish and file you get the file@treeish.
-  #         If you only pass treeish you get the treeish.
+  #         If you only pass treeish you get the head of treeish.
   #         If you only pass file you get the changes made by HEAD to file.
   #
   # treeish - The {String} or {::Treeish} to show.
@@ -193,6 +193,6 @@ class Git
     treeish = '' unless typeof treeish is 'string'
     file = file.filePath if file instanceof File
     file = '' unless typeof file is 'string'
-    file = ":#{file}" unless file.length is 0
+    file = ":#{file}" unless file.length is 0 or treeish.length is 0
 
     @cmd 'show', options, "#{treeish}#{file}"

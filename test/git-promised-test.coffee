@@ -2,6 +2,7 @@ temp = require('temp')
 
 Git = require '../src/git-promised'
 prepareFixture = require './helper'
+{Commit, Diff, File, Status, Treeish} = require '../src/models'
 
 describe 'Git-Promised', ->
 
@@ -341,3 +342,160 @@ describe 'Git-Promised', ->
     describe 'when we pass nothing', ->
       it 'rejects the promise', ->
         git.unstage().should.be.rejected
+
+  describe '#show()', ->
+    git = new Git(prepareFixture('testDir'))
+    fileString   = 'a.coffee'
+    fileInstance = new File fileString, git
+    fileNotExistingString = 'e.coffee'
+    fileNotExistingInstance = new File fileNotExistingString, git
+
+    treeishString   = 'ac657698c7630e3b65f575912aff76bf581f335f'
+    treeishInstance = new Treeish treeishString, git
+    treeishNotExistingString   = 'ac657698c7630e3b66g775912aff76bf581f335f'
+    treeishNotExistingInstance = new Treeish treeishNotExistingString, git
+
+    fileContent = '''
+          # Assignment:
+          number   = 42
+          opposite = true
+
+          # Conditions:
+          number = -42 if opposite
+
+          # Functions:
+          square = (x) -> x * x
+
+          # Arrays:
+          list = [1, 2, 3, 4, 5]
+
+          # Objects:
+          math =
+            root:   Math.sqrt
+            square: square
+            cube:   (x) -> x * square x
+
+          # Splats:
+          race = (winner, runners...) ->
+            print winner, runners
+
+          # Existence:
+          alert "I knew it!" if elvis?
+
+          # Array comprehensions:
+          cubes = (math.cube num for num in list)\n'''
+
+    changesToFileAtHead = currentHead = """
+      commit 3393287f69716a01ffb922cd18b41d530d2d6795
+      Author: Maximilian Schüßler <git@mschuessler.org>
+      Date:   Mon Jun 30 22:53:47 2014 +0200
+
+          Second commit
+
+      diff --git a/a.coffee b/a.coffee
+      index 0db65dd..1b78e9c 100644
+      --- a/a.coffee
+      +++ b/a.coffee
+      @@ -9,7 +9,7 @@ number = -42 if opposite
+       square = (x) -> x * x
+       #{ }
+       # Arrays:
+      -list = [1, 2, 3, 4, 5]
+      +list = [1, 2, 3, 4, 5, 6]
+       #{ }
+       # Objects:
+       math =\n
+    """
+
+    treeishContent = '''
+      commit ac657698c7630e3b65f575912aff76bf581f335f
+      Author: Maximilian Schüßler <git@mschuessler.org>
+      Date:   Sun Jun 29 19:02:56 2014 +0200
+    '''
+
+    describe 'when we pass an treeish and a file', ->
+
+      describe 'when we pass a Treeish instance and a File instance', ->
+        describe 'when both are existing in repo', ->
+          it 'returns the file at treeish', ->
+            git.show(treeishInstance, fileInstance).should.eventually.eql fileContent
+        describe 'when either of them is not existing in repo', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingInstance, fileInstance)
+            .should.eventually.be.rejected
+            git.show(treeishInstance, fileNotExistingInstance)
+            .should.eventually.be.rejected
+
+
+      describe 'when we pass a Treeish instance and a file string', ->
+        describe 'when both are existing in repo', ->
+          it 'returns the file at treeish', ->
+            git.show(treeishInstance, fileString).should.eventually.eql fileContent
+        describe 'when either of them is not existing in repo', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingInstance, fileString)
+            .should.eventually.be.rejected
+            git.show(treeishInstance, fileNotExistingString)
+            .should.eventually.be.rejected
+
+
+      describe 'when we pass a treeish string and a File instance', ->
+        describe 'when both are existing in repo', ->
+          it 'returns the file at treeish', ->
+            git.show(treeishString, fileInstance).should.eventually.eql fileContent
+        describe 'when either of them is not existing in repo', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingString, fileInstance)
+            .should.eventually.be.rejected
+            git.show(treeishString, fileNotExistingInstance)
+            .should.eventually.be.rejected
+
+
+      describe 'when we pass a treeish string and a file string', ->
+        describe 'when both are existing in repo', ->
+          it 'returns the file at treeish', ->
+            git.show(treeishString, fileString).should.eventually.eql fileContent
+        describe 'when either of them is not existing in repo', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingString, fileString)
+            .should.eventually.be.rejected
+            git.show(treeishString, fileNotExistingString)
+            .should.eventually.be.rejected
+
+    describe 'when we only pass a treeish', ->
+      describe 'when we pass a Treeish instance', ->
+        describe 'when it is existing', ->
+          it 'returns the treeish itself', ->
+            git.show(treeishInstance).should.eventually.contain treeishContent
+        describe 'when it is not existing', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingInstance).should.eventually.be.rejected
+
+      describe 'when we pass a treeish string', ->
+        describe 'when it is existing', ->
+          it 'returns the treeish itself', ->
+            git.show(treeishString).should.eventually.contain treeishContent
+        describe 'when it is not existing', ->
+          it 'rejects the promise', ->
+            git.show(treeishNotExistingString).should.eventually.be.rejected
+
+    describe 'when we only pass a file', ->
+      describe 'when we pass a File instance', ->
+        describe 'when it is existing', ->
+          it 'returns the changes made to the file by HEAD', ->
+            git.show(fileInstance).should.eventually.eql changesToFileAtHead
+        describe 'when it is not existing', ->
+          it 'rejects the promise', ->
+            git.show(fileNotExistingInstance).should.eventually.be.rejected
+
+      describe 'when we pass a file string', ->
+        describe 'when it is existing', ->
+          it 'returns the changes made to the file by HEAD', ->
+            git.show(fileString).should.eventually.eql changesToFileAtHead
+        describe 'when it is not existing', ->
+          it 'rejects the promise', ->
+            git.show(fileNotExistingString).should.eventually.be.rejected
+
+    describe 'when we pass neither a file nor a treeish', ->
+      it 'returns the head of the current branch', ->
+        git.show().should.eventually.eql currentHead
