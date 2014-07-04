@@ -59,7 +59,7 @@ class Git
   # limit   - The {Integer} amount of commits to show.
   #
   # Returns:  Promise resolving to an {Array} of {::Commit}s.
-  commits: (treeish='HEAD', limit=15) ->
+  log: (treeish='HEAD', limit=15) ->
     options =
       pretty: 'raw'
       'max-count': limit
