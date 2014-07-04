@@ -71,11 +71,11 @@ describe 'Git-Promised', ->
         git.log().then (o) ->
           o.should.have.length(2)
 
-          o[0].id.should.eql '3393287f69716a01ffb922cd18b41d530d2d6795'
+          o[0].ref.should.eql '3393287f69716a01ffb922cd18b41d530d2d6795'
           o[0].message.should.eql 'Second commit'
           o[0].parents.should.eql ['ac657698c7630e3b65f575912aff76bf581f335f']
 
-          o[1].id.should.eql 'ac657698c7630e3b65f575912aff76bf581f335f'
+          o[1].ref.should.eql 'ac657698c7630e3b65f575912aff76bf581f335f'
           o[1].message.should.eql 'Initial commit'
           o[1].parents.should.eql []
 

@@ -59,15 +59,20 @@ class Git
   # limit   - The {Integer} amount of commits to show.
   #
   # Returns:  Promise resolving to an {Array} of {::Commit}s.
-  log: (treeish='HEAD', limit=15) ->
+  log: (treeish='HEAD', limit=15, skip=0) ->
     options =
-      pretty: 'raw'
+      'skip': skip
       'max-count': limit
-    args = treeish
 
-    @cmd 'rev-list', options, args
-      .then (raw) ->
-        return Commit.parse(raw)
+    @cmd 'rev-list', options, treeish
+      .bind(this)
+      .then (hashes) ->
+        hashes = hashes.split('\n')[...-1]
+        commits = for hash in hashes
+          @show(hash, {pretty: 'raw', q: true})
+          .bind(this)
+          .then (raw) -> Commit.parse(raw, this)
+        Promise.all(commits)
 
   # Public: Get the diff for a file.
   #
