@@ -5,7 +5,18 @@ Treeish = require './treeish'
 module.exports=
 class Commit extends Treeish
 
-  initialize: (@repo, @ref, @tree, @parents, @author, @authoredDate, @committer, @committedDate, @gpgsig, @message) ->
+  initialize: (
+    ref
+    repo
+    @tree
+    @parents
+    @author
+    @authoredDate
+    @committer
+    @committedDate
+    @gpgsig
+    @message
+  ) -> super(ref, repo)
 
   @parse: (raw, repo) ->
     throw new Error('No valid git repo!!!') unless repo?.isGitRepo
@@ -20,8 +31,8 @@ class Commit extends Treeish
     message = raw.match(/[ ]{4}([^]*)/gm)?[0].replace(/^ {4}| +$/gm, '').trim() or ''
 
     new Commit(
-      repo
       ref
+      repo
       tree
       parents
       author
