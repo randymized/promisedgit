@@ -1,11 +1,10 @@
-{Model} = require 'backbone'
 Diff = require './diff'
 File = require './file'
 
 module.exports =
-class Treeish extends Model
+class Treeish
 
-  initialize: (@ref, @repo) ->
+  constructor: (@ref, @repo) ->
     throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
     throw new Error('No valid ref!!!') unless (typeof(@ref) is 'string')
 

@@ -4,4 +4,5 @@ module.exports =
   Diff: require './diff'
   File: require './file'
   Status: require './status'
+  Tag: require './tag'
   Treeish: require './treeish'
