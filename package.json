@@ -5,8 +5,8 @@
   "author": "Maximilian Schüßler <git@mschuessler.org>",
   "main": "lib/git-promised.js",
   "scripts": {
-    "test": "clear && mocha --compilers coffee:'./node_modules/coffee-script/lib/coffee-script/register' --reporter spec",
-    "prepublish": "coffee -o lib -c src"
+    "test": "cake test",
+    "prepublish": "cake build"
   },
   "contributors": [],
   "repository": {
