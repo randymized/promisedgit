@@ -499,3 +499,21 @@ describe 'Git-Promised', ->
     describe 'when we pass neither a file nor a treeish', ->
       it 'returns the head of the current branch', ->
         git.show().should.eventually.eql currentHead
+
+  describe '#tags()', ->
+    git = new Git(prepareFixture('tagsTest'))
+    before ->
+      git.init()
+    describe 'when we pass no max number of tags to show', ->
+      it 'shows the last 15 or less if there are less', ->
+        git.tags().should.eventually.have.length(2)
+    describe 'when we pass a max number of tags', ->
+      it 'only shows the N newest tags sorted by authordate', ->
+        git.tags(1).then (tags) ->
+          tags.should.have.length(1)
+          tags[0].ref.should.eql '4th'
+    describe 'when the repo has no tags', ->
+      it 'rejects the promise', ->
+        git = new Git(prepareFixture('testDir'))
+        git.init().then ->
+          git.tags().should.eventually.be.rejected

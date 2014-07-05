@@ -5,7 +5,7 @@ Promise      = require 'bluebird'
 {Collection} = require 'backbone'
 
 git = require './git'
-{Commit, Diff, File, Status, Treeish} = require './models'
+{Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
 module.exports=
 class Git
@@ -38,7 +38,7 @@ class Git
 
     git(command, options, args, @cwd)
 
-  # Public: Initialize the cwd.
+  # Public: constructor the cwd.
   init: ->
     @cmd 'init'
 
@@ -201,3 +201,18 @@ class Git
     file = ":#{file}" unless file.length is 0 or treeish.length is 0
 
     @cmd 'show', options, "#{treeish}#{file}"
+
+  # Public: Retrieve the maxCount newest tags.
+  #
+  # maxCount - The {Number} of tags to return. (Default: 15)
+  #
+  # Returns: Promise that resolves to an array of {::Tag}s.
+  tags: (maxCount=15) ->
+    options =
+      format: '"%(objectname) %(refname)"'
+      sort: 'authordate'
+      count: maxCount
+
+    @cmd 'for-each-ref', options, 'refs/tags/'
+      .bind(this)
+      .then (raw) -> Tag.parse(raw, this)
