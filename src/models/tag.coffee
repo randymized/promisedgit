@@ -21,5 +21,5 @@ class Tag extends Treeish
     Promise.map tags, (tagRaw) ->
       [hash, ref] = tagRaw.split(' ')
       ref = ref.split('refs/tags/')[1]
-      repo.show(hash).then (commitRaw) ->
-        new Tag(ref, repo, Commit.parse(commitRaw, repo))
+      repo.show(hash, {pretty: 'raw'}).then (commitRaw) ->
+        new Tag(ref, repo, new Commit(commitRaw, repo))
