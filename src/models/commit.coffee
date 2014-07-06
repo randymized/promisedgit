@@ -19,7 +19,7 @@ class Commit extends Treeish
     @message = @parseMessage(@raw)
 
   parseRef: (line) ->
-    regex = /^commit\s(.+)$/m
+    regex = /^(?:commit )?([a-z0-9]{40})$/m
     line.match(regex)[1]
 
   parseTree: (line) ->
