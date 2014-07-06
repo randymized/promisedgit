@@ -60,19 +60,17 @@ class Git
   #
   # Returns:  Promise resolving to an {Array} of {::Commit}s.
   log: (treeish='HEAD', limit=15, skip=0) ->
+    [treeish, limit] = ['HEAD', treeish] if typeof(treeish) is 'number'
     options =
+      'header': true
       'skip': skip
       'max-count': limit
 
     @cmd 'rev-list', options, treeish
       .bind(this)
-      .then (hashes) ->
-        hashes = hashes.split('\n')[...-1]
-        commits = for hash in hashes
-          @show(hash, {pretty: 'raw', q: true})
-          .bind(this)
-          .then (raw) -> Commit.parse(raw, this)
-        Promise.all(commits)
+      .then (commitsRaw) ->
+        commitsRaw = commitsRaw.split('\0')?[...-1] or []
+        new Commit(raw, this) for raw in commitsRaw
 
   # Public: Get the diff for a file.
   #
