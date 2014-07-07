@@ -1,4 +1,5 @@
-temp = require('temp')
+temp = require 'temp'
+path = require 'path'
 
 Git = require '../src/git-promised'
 prepareFixture = require './helper'
@@ -517,3 +518,31 @@ describe 'Git-Promised', ->
         git = new Git(prepareFixture('testDir'))
         git.init().then ->
           git.tags().should.eventually.be.rejected
+
+  describe '#commit()', ->
+
+    git = null
+
+    beforeEach ->
+      git = new Git(prepareFixture('testDir'))
+
+    describe 'when there are staged changes', ->
+
+      describe 'when we pass a commit message', ->
+        it 'commits using the passed message', ->
+          commitMessage = 'Very important changes'
+          git.commit(commitMessage).should.eventually.contain commitMessage
+      describe 'when we pass a valid file path', ->
+        it 'commits using the content as commit message', ->
+          filePath = path.join git.cwd, '.git/COMMIT_EDITMSG'
+          commitMessage = 'Damn boy, such importance'
+          git.commit(filePath).should.eventually.contain commitMessage
+
+      describe 'when we pass nothing', ->
+        it 'rejects the promise', ->
+          git.commit().should.eventually.be.rejected
+
+    describe 'when there are no staged changes', ->
+      it 'rejects the promise', ->
+        git.reset(hard: true).then ->
+          git.commit('I forgot to add').should.eventually.be.rejected
