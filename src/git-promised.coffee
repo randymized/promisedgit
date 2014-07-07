@@ -214,3 +214,25 @@ class Git
     @cmd 'for-each-ref', options, 'refs/tags/'
       .bind(this)
       .then (raw) -> Tag.parse(raw, this)
+
+  # Public: Commit the staged changes.
+  #
+  # message - The message or the path to the commit message file as {String}.
+  # options - The options as {Object}.
+  #  :cleanup - Defaults to 'strip'.
+  #
+  # Returns: Promise
+  commit: (message, options={}) ->
+
+    # If nothing gets passed for message abort.
+    return Promise.reject('No commit message!') unless typeof(message) is 'string'
+
+    # Set '--cleanup=strip' unless '--cleanup' has already been set.
+    options.cleanup = 'strip' unless 'cleanup' of options
+
+    if fs.existsSync(message)
+      options.file = message
+    else
+      options.m = message
+
+    @cmd 'commit', options
