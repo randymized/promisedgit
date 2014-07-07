@@ -3,6 +3,7 @@
 #
 
 _       = require 'underscore'
+fs      = require 'fs'
 shell   = require 'shelljs'
 Promise = require 'bluebird'
 
@@ -23,6 +24,14 @@ class GitWrapper
     if options instanceof Array or typeof(options) is 'string'
       [options, args] = [args, options]
     command = 'git ' + command if command.substring(0, 4) isnt 'git '
+
+    # `options` and `args` are optional, `cwd` is not.
+    if not fs.existsSync(cwd)
+      [options, cwd] = [null, options] if fs.existsSync(options)
+      [args, cwd] = [null, args] if fs.existsSync(options)
+
+    if not fs.existsSync(cwd)
+      return throw new Error("'#{cwd}' is no valid repository path!")
 
     # Supress the default shell output to user console.
     shell.silent = true
