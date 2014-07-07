@@ -17,9 +17,7 @@ class Git
   # cwd - The {String} representing the cwd.
   #
   # Returns: The {Git} instance.
-  constructor: (cwd) ->
-    @cwd = cwd if cwd?
-    @cwd ?= process.cwd()
+  constructor: (@cwd) ->
     return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true
 
@@ -52,7 +50,7 @@ class Git
       b: true
 
     @cmd 'status', options
-      .bind(this).then (raw) -> Status.parse(raw, this)
+      .then (raw) => Status.parse(raw, this)
 
   # Public: Get an array of commits from the current repo.
   #
@@ -68,8 +66,7 @@ class Git
       'max-count': limit
 
     @cmd 'rev-list', options, treeish
-      .bind(this)
-      .then (commitsRaw) ->
+      .then (commitsRaw) =>
         commitsRaw = commitsRaw.split('\0')?[...-1] or []
         new Commit(raw, this) for raw in commitsRaw
 
@@ -88,7 +85,7 @@ class Git
       options = file if file?
       file = null
     if not ('treeish' of options) and not file?
-      @status().bind(this).then (o) ->
+      @status().then (o) =>
         paths = if 'cached' of options
           o.staged.map ({filePath}) -> filePath
         else
