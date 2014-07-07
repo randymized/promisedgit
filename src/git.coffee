@@ -10,9 +10,21 @@ module.exports = (command, options, args, cwd) ->
 
   options ?= {}
   options = options_to_argv options
+
+  # Escape if necessary
+  for val, i in options
+    options[i] = val = val.trim()
+    options[i] = escapeShellArg(val) if ' ' in val or '"' in val
+
   options = options.join ' '
 
   args ?= []
+
+  # Escape if necessary
+  for arg, i in args
+    args[i] = arg = arg.trim()
+    args[i] = escapeShellArg(arg) if ' ' in arg or '"' in arg
+
   args = args.join ' ' if args instanceof Array
 
   command = "#{command} #{options} #{args}"
@@ -52,3 +64,6 @@ options_to_argv = (options) ->
       else
         argv.push "--#{key}=#{val}"
   return argv
+
+escapeShellArg = (cmd) ->
+  '\"' + cmd.replace(/\"/g, '"\\""') + '\"'
