@@ -7,7 +7,17 @@ prepareFixture = require '../helper'
 describe 'Commit', ->
   describe 'Prototype functions', ->
     # Initialize empty comparison variables.
-    [example, ref, tree, parents, authorLine, committerLine, message] = []
+    [
+      example
+      ref
+      tree
+      parents
+      authorLine
+      authoredDate
+      committerLine
+      committedDate
+      message
+    ] = []
 
     beforeEach ->
       # Our test data.
@@ -30,7 +40,9 @@ describe 'Commit', ->
         '9ff65a2cf3e1a4840166b7d9e93febddeed48662'
       ]
       authorLine = 'Maximilian Schüßler <git@mschuessler.org> 1404686270 +0200'
+      authoredDate = new Date(1000 * +1404686270)
       committerLine = 'Maximilian Schüßler <git@mschuessler.org> 1404686270 +0200'
+      committedDate = new Date(1000 * +1404686270)
       message = "Merge branch 'test'"
 
     describe '#parseRef()', ->
@@ -63,7 +75,7 @@ describe 'Commit', ->
     describe '#parseRaw()', ->
 
       describe 'when we pass input', ->
-        it 'invokes the helper methods and sets the object properties accordingly', ->
+        it 'invokes the helper methods and sets the object properties', ->
 
           class Dummy extends Commit
             constructor: (@raw) ->
@@ -78,5 +90,7 @@ describe 'Commit', ->
 
           test.author.name.should.eql 'Maximilian Schüßler'
           test.author.email.should.eql 'git@mschuessler.org'
+          test.authoredDate.should.eql authoredDate
           test.committer.name.should.eql 'Maximilian Schüßler'
           test.committer.email.should.eql 'git@mschuessler.org'
+          test.committedDate.should.eql committedDate
