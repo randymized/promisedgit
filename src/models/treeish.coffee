@@ -5,8 +5,8 @@ module.exports =
 class Treeish
 
   constructor: (@ref, @repo) ->
-    throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
-    throw new Error('No valid ref!!!') unless (typeof(@ref) is 'string')
+    throw new Error('No valid git repo!') unless @repo?.isGitRepo
+    throw new Error('No valid ref!') unless (typeof(@ref) is 'string')
 
   checkout: ->
     @repo.checkout(@ref)
