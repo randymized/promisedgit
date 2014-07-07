@@ -108,8 +108,8 @@ class Git
       _.extend options, {'p': true, 'unified': 1, 'no-color': true}
       @cmd 'diff', options, file
         .then (raw) ->
-          return throw new Error("'#{file}' has no diffs! Forgot '--cached'?") unless raw?
-          return new Diff(file, raw)
+          return new Diff(file, raw) if raw?.length > 0
+          return throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
 
   # Public: Refresh the git index.
   #

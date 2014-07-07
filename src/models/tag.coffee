@@ -18,7 +18,7 @@ class Tag extends Treeish
 
 
   @parse: (raw, repo) ->
-    return throw new Error('No tags available!') unless typeof(raw) is 'string'
+    return throw new Error('No tags available!') unless raw?.length > 0
     return throw new Error('No valid git repo!') unless repo?.isGitRepo
 
     tags = raw.split('\n')[...-1]
