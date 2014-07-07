@@ -8,7 +8,7 @@ prepareFixture = require './helper'
 describe 'Git-Promised', ->
 
   #############################################################################
-  # The test fixture we are using contains:                                   #
+  # The test fixture ('testDir') we are mainly using contains:                #
   #############################################################################
   #                                                                           #
   #   ## master                                                               #
