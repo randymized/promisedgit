@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
+#
+
 Actor = require './actor'
 Diff = require './diff'
 Treeish = require './treeish'

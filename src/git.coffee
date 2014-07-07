@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
+#
+
 _       = require 'underscore'
 shell   = require 'shelljs'
 Promise = require 'bluebird'

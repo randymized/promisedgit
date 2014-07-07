@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
+#
+
 fs     = require 'fs'
 path   = require 'path'
 wrench = require 'wrench'
