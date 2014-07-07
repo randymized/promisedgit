@@ -81,7 +81,7 @@ class Git
   #   :cached - {Boolean} Show the diff from index.
   #
   # Returns: Promise resolving to {::Diff} if you passed a single path or to an
-  #          {Array} of {::Diffs} if you passed an {Array} or nothing for file.
+  #          {Array} of {::Diff}s if you passed an {Array} or nothing for file.
 
   diff: (file, options={}) ->
     if not (file instanceof File) and not (typeof(file) is 'string') and not Array.isArray(file)
