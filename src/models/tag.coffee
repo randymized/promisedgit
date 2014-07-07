@@ -7,9 +7,8 @@ Promise = require 'bluebird'
 Commit  = require './commit'
 Treeish = require './treeish'
 
-module.exports=
+# Public: A tag is a special git treeish.
 class Tag extends Treeish
-
   constructor: (
     ref
     repo
@@ -27,3 +26,5 @@ class Tag extends Treeish
       ref = ref.split('refs/tags/')[1]
       repo.show(hash, {pretty: 'raw'}).then (commitRaw) ->
         new Tag(ref, repo, new Commit(commitRaw, repo))
+
+module.exports = Tag

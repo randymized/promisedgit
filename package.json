@@ -21,7 +21,6 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "backbone": "^1.1.2",
     "bluebird": "~2.2.0",
     "shelljs": "~0.3.0",
     "underscore": "~1.6.0"

@@ -6,7 +6,7 @@ Actor = require './actor'
 Diff = require './diff'
 Treeish = require './treeish'
 
-module.exports=
+# Public: Handles commit amending.
 class Amend
 
   alive: true
@@ -15,7 +15,7 @@ class Amend
   # Public: Constructor
   #
   # @message - The original commit message as {String}.
-  # @repo    - The Git object as {::Object}.
+  # @repo    - The Git object as {Object}.
   #
   # Returns: `undefined`
   constructor: (@message='', @repo) ->
@@ -49,3 +49,5 @@ class Amend
     @repo = null
     @alive = false
     @destroyed = true
+
+module.exports = Amend

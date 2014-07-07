@@ -4,7 +4,7 @@
 
 File = require './file'
 
-module.exports=
+# Public: Represents the git status for the whole repository.
 class Status
   constructor: (@branch, @staged, @unstaged, @untracked) ->
     @branch    ?= 'HEAD'
@@ -32,3 +32,5 @@ class Status
       untracked.push file if file.untracked()
 
     new Status(branch, staged, unstaged, untracked)
+
+module.exports = Status

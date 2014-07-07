@@ -6,20 +6,17 @@ _            = require 'underscore'
 fs           = require 'fs'
 path         = require 'path'
 Promise      = require 'bluebird'
-{Collection} = require 'backbone'
 
 git = require './git'
 {Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
-module.exports=
+# Public: Main class. Instances represent the whole git repository.
 class Git
-
-  files: new Collection()
-  refs:  new Collection()
-
-  # Public: Constructor
+  # Public: Create an instance representing the git repository.
   #
   # cwd - The {String} representing the cwd.
+  #
+  # Returns: The {Git} instance.
   constructor: (cwd) ->
     @cwd = cwd if cwd?
     @cwd ?= process.cwd()
@@ -48,7 +45,7 @@ class Git
 
   # Public: Get the repo status.
   #
-  # Returns: Promise resolving to {::Status}
+  # Returns: Promise resolving to {Status}
   status: ->
     options =
       z: true
@@ -60,9 +57,9 @@ class Git
   # Public: Get an array of commits from the current repo.
   #
   # treeish - The {String} Treeish.
-  # limit   - The {Integer} amount of commits to show.
+  # limit   - The {Number} amount of commits to show.
   #
-  # Returns:  Promise resolving to an {Array} of {::Commit}s.
+  # Returns:  Promise resolving to an {Array} of {Commit}s.
   log: (treeish='HEAD', limit=15, skip=0) ->
     [treeish, limit] = ['HEAD', treeish] if typeof(treeish) is 'number'
     options =
@@ -82,11 +79,10 @@ class Git
   #           to diff.
   #           If you pass no file path(s), it will diff all modified files.
   # options - The {Object} with options git-diff.
-  #   :cached - {Boolean} Show the diff from index.
+  #           :cached - {Boolean} Show the diff from index.
   #
-  # Returns: Promise resolving to {::Diff} if you passed a single path or to an
-  #          {Array} of {::Diff}s if you passed an {Array} or nothing for file.
-
+  # Returns: Promise resolving to {Diff} if you passed a single path or to an
+  #          {Array} of {Diff}s if you passed an {Array} or nothing for file.
   diff: (file, options={}) ->
     if not (file instanceof File) and not (typeof(file) is 'string') and not Array.isArray(file)
       options = file if file?
@@ -132,6 +128,12 @@ class Git
       A: true
     @cmd 'add', options, file
 
+  # Public: Checkout a treeish.
+  #
+  # treeish - The treeish to checkout as {String} or {Treeish}.
+  # options - The options as {Object}.
+  #
+  # Returns: Promise.
   checkout: (treeish='HEAD', options={}) ->
     @cmd 'checkout', options, treeish
 
@@ -149,11 +151,11 @@ class Git
   #
   # treeish - The {String} to reset to. (Default: 'HEAD')
   # options - The {Object} with flags for git CLI.
-  #   :soft  - {Boolean)
-  #   :mixed - {Boolean) When no other option given git defaults to 'mixed'.
-  #   :hard  - {Boolean)
-  #   :merge - {Boolean)
-  #   :keep  - {Boolean)
+  #           :soft  - {Boolean)
+  #           :mixed - {Boolean) [Default]
+  #           :hard  - {Boolean)
+  #           :merge - {Boolean)
+  #           :keep  - {Boolean)
   #
   # Returns: Promise.
   reset: (treeish='HEAD', options={}) ->
@@ -180,8 +182,8 @@ class Git
   #         If you only pass treeish you get the head of treeish.
   #         If you only pass file you get the changes made by HEAD to file.
   #
-  # treeish - The {String} or {::Treeish} to show.
-  # file    - The {String} or {::File} to show.
+  # treeish - The {String} or {Treeish} to show.
+  # file    - The {String} or {File} to show.
   # options - The {Object} options.
   #
   # Returns: Promise.
@@ -208,7 +210,7 @@ class Git
   #
   # maxCount - The {Number} of tags to return. (Default: 15)
   #
-  # Returns: Promise that resolves to an array of {::Tag}s.
+  # Returns: Promise that resolves to an array of {Tag}s.
   tags: (maxCount=15) ->
     options =
       format: '%(objectname) %(refname)'
@@ -222,7 +224,7 @@ class Git
   #
   # message - The message or the path to the commit message file as {String}.
   # options - The options as {Object}.
-  #  :cleanup - Defaults to 'strip'.
+  #           :cleanup - Defaults to 'strip'.
   #
   # Returns: Promise
   commit: (message, options={}) ->
@@ -242,7 +244,9 @@ class Git
 
   # Public: Amend HEAD.
   #
-  # Returns: Promise that resolves to an {::Amend} instance.
+  # Returns: Promise that resolves to an {Amend} instance.
   amend: ->
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
+
+module.exports = Git

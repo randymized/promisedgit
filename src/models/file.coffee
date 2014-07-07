@@ -2,12 +2,10 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-{Model} = require 'backbone'
 fs = require 'fs'
 
-module.exports=
-class File extends Model
-
+# Public: Represents a file and its status.
+class File
   constructor: (@filePath, @repo, @mode='  ') ->
     throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
     throw new Error('No valid filePath!!!') unless (typeof(@filePath) is 'string')
@@ -43,3 +41,5 @@ class File extends Model
 
   untracked: ->
     @mode is '??'
+
+module.exports = File

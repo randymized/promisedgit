@@ -2,13 +2,12 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-Actor = require './actor'
-Diff = require './diff'
+Actor   = require './actor'
+Diff    = require './diff'
 Treeish = require './treeish'
 
-module.exports=
+# Public: Represents a git commit object.
 class Commit extends Treeish
-
   constructor: (@raw, @repo) ->
     throw new Error('No raw data!') unless (typeof(@raw) is 'string')
     @parseRaw()
@@ -55,4 +54,6 @@ class Commit extends Treeish
 
   actor: (line) ->
     [m, actor, epoch] = line?.match(/^(.*?) (\d+) .*$/m) or ['', '', '']
-    return [Actor.from_string(actor), new Date(1000 * +epoch)]
+    return [new Actor(actor), new Date(1000 * +epoch)]
+
+module.exports = Commit
