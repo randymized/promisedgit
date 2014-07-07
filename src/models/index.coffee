@@ -1,5 +1,6 @@
 module.exports =
   Actor: require './actor'
+  Amend: require './amend'
   Commit: require './commit'
   Diff: require './diff'
   File: require './file'

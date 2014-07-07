@@ -5,7 +5,7 @@ Promise      = require 'bluebird'
 {Collection} = require 'backbone'
 
 git = require './git'
-{Commit, Diff, File, Status, Tag, Treeish} = require './models'
+{Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
 module.exports=
 class Git
@@ -233,6 +233,13 @@ class Git
     if fs.existsSync(message)
       options.file = message
     else
-      options.m = message
+      options.m = "'#{message}'"
 
     @cmd 'commit', options
+
+  # Public: Amend HEAD.
+  #
+  # Returns: Promise that resolves to an {::Amend} instance.
+  amend: ->
+    @cmd 'log', {'1': true, format: '%B'}
+    .then (amendMessage) => new Amend(amendMessage, this)
