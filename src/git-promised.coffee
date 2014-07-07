@@ -207,13 +207,12 @@ class Git
   # Returns: Promise that resolves to an array of {::Tag}s.
   tags: (maxCount=15) ->
     options =
-      format: '"%(objectname) %(refname)"'
+      format: '%(objectname) %(refname)'
       sort: 'authordate'
       count: maxCount
 
     @cmd 'for-each-ref', options, 'refs/tags/'
-      .bind(this)
-      .then (raw) -> Tag.parse(raw, this)
+      .then (raw) => Tag.parse(raw, this)
 
   # Public: Commit the staged changes.
   #
@@ -233,7 +232,7 @@ class Git
     if fs.existsSync(message)
       options.file = message
     else
-      options.m = "'#{message}'"
+      options.m = message
 
     @cmd 'commit', options
 
