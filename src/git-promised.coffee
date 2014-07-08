@@ -246,4 +246,4 @@ class Git
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
 
-module.exports = Git
+module.exports = GitPromised
