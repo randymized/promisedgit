@@ -51,7 +51,7 @@ class GitWrapper
           reject(error)
         resolve(output)
 
-  # Internal: Converts the options object into an array.
+  # Private: Converts the options object into an array.
   #
   # options - The options as {Object}.
   #
@@ -81,7 +81,7 @@ class GitWrapper
 
     argv.join(' ')
 
-  # Internal: Escapes the argument(s) and formats them.
+  # Private: Escapes the argument(s) and formats them.
   #
   # args - The arguments as {String|Array}.
   #
@@ -95,7 +95,7 @@ class GitWrapper
     else
       ''
 
-  # Internal: Helper method to escape shell arguments.
+  # Private: Helper method to escape shell arguments.
   #
   # cmd - The command to escape as {String}.
   #
