@@ -1,0 +1,11 @@
+--name       "git-promised"
+--readme     README.md
+--title      "git-promised Documentation"
+--private
+--internal
+--quiet
+--output-dir ./doc
+./src
+-
+LICENSE
+CHANGELOG.md
