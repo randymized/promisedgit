@@ -2,29 +2,32 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-Promise = require 'bluebird'
-
 Commit  = require './commit'
 Treeish = require './treeish'
 
 # Public: A tag is a special git treeish.
 class Tag extends Treeish
-  constructor: (
-    ref
-    repo
-    @commit
-  ) -> super(ref, repo)
+  # Public: Constructs a new Tag instance.
+  #
+  # raw  - The raw data as {String}.
+  # repo - The repository as {GitPromised}.
+  #
+  # Returns: An instance of {Tag}.
+  constructor: (raw, repo) ->
+    [hash, ref] = @parseRaw(raw)
+    super(ref, repo)
 
+    repo.show(hash, {pretty: 'raw'}).then (commitRaw) =>
+      @commit = new Commit(commitRaw, @repo)
 
-  @parse: (raw, repo) ->
-    return throw new Error('No tags available!') unless raw?.length > 0
-    return throw new Error('No valid git repo!') unless repo?.isGitRepo
-
-    tags = raw.split('\n')[...-1]
-    Promise.map tags, (tagRaw) ->
-      [hash, ref] = tagRaw.split(' ')
-      ref = ref.split('refs/tags/')[1]
-      repo.show(hash, {pretty: 'raw'}).then (commitRaw) ->
-        new Tag(ref, repo, new Commit(commitRaw, repo))
+  # Internal: Helper method to parse the raw data.
+  #
+  # raw - The raw dat as {String}.
+  #
+  # Returns: The formatted raw data as {Array}.
+  parseRaw: (raw) ->
+    [hash, ref] = raw.split(' ')
+    ref = ref.split('refs/tags/')[1]
+    [hash, ref]
 
 module.exports = Tag

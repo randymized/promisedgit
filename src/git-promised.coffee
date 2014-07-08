@@ -241,7 +241,10 @@ class GitPromised
       count: maxCount
 
     @cmd 'for-each-ref', options, 'refs/tags/'
-      .then (raw) => Tag.parse(raw, this)
+      .then (raw) =>
+        return throw new Error('No tags available') unless raw.length > 0
+        tags = raw.split('\n')[...-1]
+        Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
 
   # Public: Commit the staged changes.
   #
