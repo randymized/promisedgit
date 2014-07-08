@@ -7,7 +7,8 @@ fs      = require 'fs'
 shell   = require 'shelljs'
 Promise = require 'bluebird'
 
-# Internal: GitWrapper parses our commands to and the output from the stdin.
+# Internal: GitWrapper parses our commands to and the output from the CLI. You
+#           can access it through the {GitPromised::cmd} method.
 class GitWrapper
 
   # Public: Git CLI wrapper.
@@ -15,7 +16,7 @@ class GitWrapper
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
   #           :treeish - If you need to specifiy a git treeish range do it here.
-  #                      Èxample: `HEAD..HEAD~5`.
+  #                      Example: `HEAD..HEAD~5`.
   # args    - The args to pass as {String} or {Array}.
   # cwd     - The current working directory as {String}.
   #

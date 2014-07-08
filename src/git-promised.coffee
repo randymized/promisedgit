@@ -47,14 +47,15 @@ class GitPromised
     return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true
 
-  # Public: Run git command.
+  # Public: Access to the GitWrapper. Use it to execute custom git commands.
   #
-  # command - The {String} command to execute.
-  # options - The {Object} containing options
+  # command - The command to execute as {String}.
+  # options - The options to pass as {Object}.
+  #           :treeish - If you need to specifiy a git treeish range do it here.
+  #                      Example: `HEAD..HEAD~5`.
+  # args    - The args to pass as {String} or {Array}.
   #
-  # args    - The {Array} or {String} representing the arguments to pass.
-  #
-  # Returns: Promise resolving the stdout from CLI.
+  # Returns: Promise that resolves to the stdout/stderr.
   cmd: (command, options, args) ->
     if options instanceof Array or options instanceof String
       [options, args] = [args, options]
