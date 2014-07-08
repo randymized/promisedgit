@@ -25,9 +25,9 @@ class Treeish
   # Public: Get the {Diff} this {Treeish} introduced.
   #
   # Returns: Promise that resolves to a {Diff}.
-  diff: (treeish='HEAD') ->
-    options = {treeish: "#{@ref}..#{treeish}"}
-    @repo.getDiff(options)
+  diff: ->
+    @repo.show(@ref, pretty: 'raw').then (raw) ->
+      new Diff(null, raw)
 
   # Public: Get the diff to another {Treeish}.
   #
