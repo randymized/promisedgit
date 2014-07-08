@@ -11,7 +11,33 @@ git = require './git'
 {Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
 # Public: Main class. Instances represent the whole git repository.
-class Git
+#
+# You must provide a valid working directory to the constructor.
+#
+# ##Example
+# ```coffee
+# Git = require 'git-promised'
+# git = new Git('/tmp/exampleRepo')
+#
+# # Add all unstaged files to the index.
+# git.add().then ->
+#   # Commit them.
+#   git.commit('Much important changes, sir').then ->
+#     # What did we commit?
+#     git.show('HEAD', {stat: true}).then (o) ->
+#       console.log(o)
+#       # commit d4e73a81525749e0538ab91a8cf9dd2e4a85a682
+#       # Author: Maximilian Schüßler <git@mschuessler.org>
+#       # Date:   Tue Jul 8 10:01:21 2014 +0200
+#       #
+#       #     Much important changes, sir
+#       #
+#       #  a.coffee | 2 +-
+#       #  b.coffee | 2 +-
+#       #  d.coffee | 4 ++++
+#       #  3 files changed, 6 insertions(+), 2 deletions(-)
+# ```
+class GitPromised
   # Public: Create an instance representing the git repository.
   #
   # cwd - The {String} representing the cwd.
@@ -207,7 +233,7 @@ class Git
   #
   # maxCount - The {Number} of tags to return. (Default: 15)
   #
-  # Returns: Promise that resolves to an array of {Tag}s.
+  # Returns: Promise that resolves to an {Array} of {Tag}s.
   getTags: (maxCount=15) ->
     options =
       format: '%(objectname) %(refname)'
