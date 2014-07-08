@@ -94,16 +94,16 @@ describe 'Git-Promised', ->
 
         describe 'when it contains staged diffs', ->
           it 'rejects the promise', ->
-            git.diff('a.coffee').should.be.rejected
+            git.getDiff('a.coffee').should.be.rejected
 
           describe 'when we add the --cached flag', ->
             it 'resolves with a Diff object', ->
-              git.diff('a.coffee', cached: true).then (o) ->
+              git.getDiff('a.coffee', cached: true).then (o) ->
                 o.raw.should.be.ok.and.not.equal ''
 
         describe 'when it contains unstaged diffs', ->
           it 'resolves with a Diff object', ->
-            git.diff('b.coffee').then (o) ->
+            git.getDiff('b.coffee').then (o) ->
               diffRaw = """diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
                           --- a/b.coffee
@@ -116,21 +116,21 @@ describe 'Git-Promised', ->
 
         describe 'when it contains no diffs', ->
           it 'rejects the promise', ->
-            git.diff('c.coffee').should.be.rejected
+            git.getDiff('c.coffee').should.be.rejected
 
       describe 'when it is not existing', ->
-        git.diff('e.coffee').should.be.rejected
+        git.getDiff('e.coffee').should.be.rejected
 
     describe 'when we do not pass a file', ->
       it 'returns all diffs in workingTree', ->
-        git.diff().then (o) ->
+        git.getDiff().then (o) ->
           o.should.have.length(1)
           o[0].filePath.should.eql 'b.coffee'
           o[0].chunks.should.have.length(1)
 
       describe 'when we set the --cached flag', ->
         it 'returns all diffs in index', ->
-          git.diff({cached: true}).then (o) ->
+          git.getDiff({cached: true}).then (o) ->
             o.should.have.length(1)
             o[0].filePath.should.eql 'a.coffee'
             o[0].chunks.should.have.length(1)
@@ -138,7 +138,7 @@ describe 'Git-Promised', ->
     describe 'when we pass multiple files', ->
       describe 'when only some of them contain diffs', ->
         it 'returns Diff-Objects for the files that have diffs', ->
-          git.diff(['a.coffee', 'b.coffee']).then (o) ->
+          git.getDiff(['a.coffee', 'b.coffee']).then (o) ->
             o.should.have.length(1)
             diffRaw = """diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
@@ -152,12 +152,12 @@ describe 'Git-Promised', ->
 
       describe 'when none of them contain diffs', ->
         it 'returns an empty array', ->
-          git.diff(['a.coffee', 'c.coffee']).then (o) ->
+          git.getDiff(['a.coffee', 'c.coffee']).then (o) ->
             o.should.have.length(0)
 
       describe 'when some of them do not exist', ->
         it 'returns an array with the diffs of the existing files', ->
-          git.diff(['b.coffee', 'c.coffee', 'e.coffee']).then (o) ->
+          git.getDiff(['b.coffee', 'c.coffee', 'e.coffee']).then (o) ->
             o.should.have.length(1)
 
   describe '#add()', ->
@@ -511,17 +511,17 @@ describe 'Git-Promised', ->
       git.init()
     describe 'when we pass no max number of tags to show', ->
       it 'shows the last 15 or less if there are less', ->
-        git.tags().should.eventually.have.length(2)
+        git.getTags().should.eventually.have.length(2)
     describe 'when we pass a max number of tags', ->
       it 'only shows the N newest tags sorted by authordate', ->
-        git.tags(1).then (tags) ->
+        git.getTags(1).then (tags) ->
           tags.should.have.length(1)
           tags[0].ref.should.eql '4th'
     describe 'when the repo has no tags', ->
       it 'rejects the promise', ->
         git = new Git(prepareFixture('testDir'))
         git.init().then ->
-          git.tags().should.eventually.be.rejected
+          git.getTags().should.eventually.be.rejected
 
   describe '#commit()', ->
 

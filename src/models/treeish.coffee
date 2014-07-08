@@ -17,11 +17,11 @@ class Treeish
 
   diff: (treeish='HEAD') ->
     options = {treeish: "#{@ref}..#{treeish}"}
-    @repo.diff(options)
+    @repo.getDiff(options)
 
   diffFrom: (treeish='HEAD') ->
     options = {treeish: "#{treeish}..#{@ref}"}
-    @repo.diff(options)
+    @repo.getDiff(options)
 
   getFile: (file) ->
     return throw new Error('No valid file!') unless file?

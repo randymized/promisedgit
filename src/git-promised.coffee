@@ -80,7 +80,7 @@ class Git
   #
   # Returns: Promise resolving to {Diff} if you passed a single path or to an
   #          {Array} of {Diff}s if you passed an {Array} or nothing for file.
-  diff: (file, options={}) ->
+  getDiff: (file, options={}) ->
     if not (file instanceof File) and not (typeof(file) is 'string') and not Array.isArray(file)
       options = file if file?
       file = null
@@ -90,10 +90,10 @@ class Git
           o.staged.map ({filePath}) -> filePath
         else
           o.unstaged.map ({filePath}) -> filePath
-        @diff(paths, options)
+        @getDiff(paths, options)
     else if file instanceof Array
       diffs = for filePath in file
-        @diff(filePath, options)
+        @getDiff(filePath, options)
         .then (diff) -> diff
         .catch -> null
       Promise.all(diffs).then(_.compact)
@@ -208,7 +208,7 @@ class Git
   # maxCount - The {Number} of tags to return. (Default: 15)
   #
   # Returns: Promise that resolves to an array of {Tag}s.
-  tags: (maxCount=15) ->
+  getTags: (maxCount=15) ->
     options =
       format: '%(objectname) %(refname)'
       sort: 'authordate'
