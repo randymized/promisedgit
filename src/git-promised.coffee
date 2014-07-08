@@ -7,7 +7,7 @@ fs           = require 'fs'
 path         = require 'path'
 Promise      = require 'bluebird'
 
-git = require './git'
+git = require './git-wrapper'
 {Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
 # Public: Main class. Instances represent the whole git repository.
