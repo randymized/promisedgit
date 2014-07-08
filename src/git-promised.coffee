@@ -42,7 +42,7 @@ class GitPromised
   #
   # cwd - The {String} representing the cwd.
   #
-  # Returns: The {Git} instance.
+  # Returns: The {GitPromised} instance.
   constructor: (@cwd) ->
     return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true

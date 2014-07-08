@@ -5,6 +5,8 @@
 Diff = require './diff'
 File = require './file'
 
+# Public: This class is the base class to allow easy access to relevant actions
+# upon any kind of treeish object in git.
 class Treeish
   # Public: Constructs a new instance of {Treeish}.
   #

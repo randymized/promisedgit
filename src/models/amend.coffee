@@ -17,7 +17,7 @@ class Amend
   # @message - The original commit message as {String}.
   # @repo    - The Git object as {Object}.
   #
-  # Returns: `undefined`
+  # Returns: A new instance of {Amend}.
   constructor: (@message='', @repo) ->
     [@message, @repo] = ['', @message] if @message?.isGitRepo
     return throw new Error('No valid git repo!') unless @repo?.isGitRepo
