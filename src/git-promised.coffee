@@ -47,6 +47,44 @@ class GitPromised
     return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true
 
+  # Public: Add file(s) to the index.
+  #
+  # file - The {String} or {Array} of files to add to index.
+  #        Defaults to add all files!
+  #
+  # Returns: Promise.
+  add: (file) ->
+    file ?= '.'
+    options =
+      A: true
+    @cmd 'add', options, file
+
+  # Public: Amend HEAD.
+  #
+  # Returns: Promise that resolves to an {Amend} instance.
+  amend: ->
+    @cmd 'log', {'1': true, format: '%B'}
+    .then (amendMessage) => new Amend(amendMessage, this)
+
+  # Public: Checkout a treeish.
+  #
+  # treeish - The treeish to checkout as {String} or {Treeish}.
+  # options - The options as {Object}.
+  #
+  # Returns: Promise.
+  checkout: (treeish='HEAD', options={}) ->
+    @cmd 'checkout', options, treeish
+
+  # Public: Checkout file.
+  #
+  # file - The {String} with the file to checkout.
+  #        Defaults to checking out all files with changes!
+  #
+  # Returns:  Promise.
+  checkoutFile: (file) ->
+    options = {f: true} unless file?
+    @cmd 'checkout', options, file
+
   # Public: Access to the GitWrapper. Use it to execute custom git commands.
   #
   # command - The command to execute as {String}.
@@ -64,38 +102,27 @@ class GitPromised
 
     git(command, options, args, @cwd)
 
-  # Public: Initialize the git repo.
-  init: ->
-    @cmd 'init'
-
-  # Public: Get the repo status.
+  # Public: Commit the staged changes.
   #
-  # Returns: Promise resolving to {Status}
-  status: ->
-    options =
-      z: true
-      b: true
-
-    @cmd 'status', options
-      .then (raw) => new Status(raw, this)
-
-  # Public: Get an array of commits from the current repo.
+  # message - The message or the path to the commit message file as {String}.
+  # options - The options as {Object}.
+  #           :cleanup - Defaults to 'strip'.
   #
-  # treeish - The {String} Treeish.
-  # limit   - The {Number} amount of commits to show.
-  #
-  # Returns:  Promise resolving to an {Array} of {Commit}s.
-  log: (treeish='HEAD', limit=15, skip=0) ->
-    [treeish, limit] = ['HEAD', treeish] if typeof(treeish) is 'number'
-    options =
-      'header': true
-      'skip': skip
-      'max-count': limit
+  # Returns: Promise
+  commit: (message, options={}) ->
 
-    @cmd 'rev-list', options, treeish
-      .then (commitsRaw) =>
-        commitsRaw = commitsRaw.split('\0')?[...-1] or []
-        new Commit(raw, this) for raw in commitsRaw
+    # If nothing gets passed for message abort.
+    return Promise.reject('No commit message!') unless typeof(message) is 'string'
+
+    # Set '--cleanup=strip' unless '--cleanup' has already been set.
+    options.cleanup = 'strip' unless 'cleanup' of options
+
+    if fs.existsSync(message)
+      options.file = message
+    else
+      options.m = message
+
+    @cmd 'commit', options
 
   # Public: Get the diff for a file.
   #
@@ -131,6 +158,45 @@ class GitPromised
           return new Diff(file, raw) if raw?.length > 0
           return throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
 
+  # Public: Retrieve the maxCount newest tags.
+  #
+  # maxCount - The {Number} of tags to return. (Default: 15)
+  #
+  # Returns: Promise that resolves to an {Array} of {Tag}s.
+  getTags: (maxCount=15) ->
+    options =
+      format: '%(objectname) %(refname)'
+      sort: 'authordate'
+      count: maxCount
+
+    @cmd 'for-each-ref', options, 'refs/tags/'
+      .then (raw) =>
+        return throw new Error('No tags available') unless raw.length > 0
+        tags = raw.split('\n')[...-1]
+        Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
+
+  # Public: Initialize the git repo.
+  init: ->
+    @cmd 'init'
+
+  # Public: Get an array of commits from the current repo.
+  #
+  # treeish - The {String} Treeish.
+  # limit   - The {Number} amount of commits to show.
+  #
+  # Returns:  Promise resolving to an {Array} of {Commit}s.
+  log: (treeish='HEAD', limit=15, skip=0) ->
+    [treeish, limit] = ['HEAD', treeish] if typeof(treeish) is 'number'
+    options =
+      'header': true
+      'skip': skip
+      'max-count': limit
+
+    @cmd 'rev-list', options, treeish
+      .then (commitsRaw) =>
+        commitsRaw = commitsRaw.split('\0')?[...-1] or []
+        new Commit(raw, this) for raw in commitsRaw
+
   # Public: Refresh the git index.
   #
   # Returns: Promise.
@@ -139,37 +205,6 @@ class GitPromised
       refresh: true
 
     @cmd 'add', options, '.'
-
-  # Public: Add file(s) to the index.
-  #
-  # file - The {String} or {Array} of files to add to index.
-  #        Defaults to add all files!
-  #
-  # Returns: Promise.
-  add: (file) ->
-    file ?= '.'
-    options =
-      A: true
-    @cmd 'add', options, file
-
-  # Public: Checkout a treeish.
-  #
-  # treeish - The treeish to checkout as {String} or {Treeish}.
-  # options - The options as {Object}.
-  #
-  # Returns: Promise.
-  checkout: (treeish='HEAD', options={}) ->
-    @cmd 'checkout', options, treeish
-
-  # Public: Checkout file.
-  #
-  # file - The {String} with the file to checkout.
-  #        Defaults to checking out all files with changes!
-  #
-  # Returns:  Promise.
-  checkoutFile: (file) ->
-    options = {f: true} unless file?
-    @cmd 'checkout', options, file
 
   # Public: Reset repo to treeish.
   #
@@ -187,19 +222,6 @@ class GitPromised
     [treeish, options] = ['HEAD', treeish] if typeof(treeish) is 'object'
 
     @cmd 'reset', options, treeish
-
-  # Public: Remove given file(s) from the index but leave it/them in the
-  #         working tree.
-  #
-  # file - The {String} or {Array} of files to unstage.
-  #
-  # Returns: Promise.
-  unstage: (file) ->
-    return Promise.reject('No file given') unless file?
-    file = [file] unless file instanceof Array
-    file.unshift 'HEAD', '--'
-
-    @cmd 'reset', {}, file
 
   # Public: Wrapper for git-show.
   #         If you pass treeish and file you get the file@treeish.
@@ -230,50 +252,28 @@ class GitPromised
 
     @cmd 'show', options, "#{treeish}#{file}"
 
-  # Public: Retrieve the maxCount newest tags.
+  # Public: Get the repo status.
   #
-  # maxCount - The {Number} of tags to return. (Default: 15)
-  #
-  # Returns: Promise that resolves to an {Array} of {Tag}s.
-  getTags: (maxCount=15) ->
+  # Returns: Promise resolving to {Status}
+  status: ->
     options =
-      format: '%(objectname) %(refname)'
-      sort: 'authordate'
-      count: maxCount
+      z: true
+      b: true
 
-    @cmd 'for-each-ref', options, 'refs/tags/'
-      .then (raw) =>
-        return throw new Error('No tags available') unless raw.length > 0
-        tags = raw.split('\n')[...-1]
-        Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
+    @cmd 'status', options
+      .then (raw) => new Status(raw, this)
 
-  # Public: Commit the staged changes.
+  # Public: Remove given file(s) from the index but leave it/them in the
+  #         working tree.
   #
-  # message - The message or the path to the commit message file as {String}.
-  # options - The options as {Object}.
-  #           :cleanup - Defaults to 'strip'.
+  # file - The {String} or {Array} of files to unstage.
   #
-  # Returns: Promise
-  commit: (message, options={}) ->
+  # Returns: Promise.
+  unstage: (file) ->
+    return Promise.reject('No file given') unless file?
+    file = [file] unless file instanceof Array
+    file.unshift 'HEAD', '--'
 
-    # If nothing gets passed for message abort.
-    return Promise.reject('No commit message!') unless typeof(message) is 'string'
-
-    # Set '--cleanup=strip' unless '--cleanup' has already been set.
-    options.cleanup = 'strip' unless 'cleanup' of options
-
-    if fs.existsSync(message)
-      options.file = message
-    else
-      options.m = message
-
-    @cmd 'commit', options
-
-  # Public: Amend HEAD.
-  #
-  # Returns: Promise that resolves to an {Amend} instance.
-  amend: ->
-    @cmd 'log', {'1': true, format: '%B'}
-    .then (amendMessage) => new Amend(amendMessage, this)
+    @cmd 'reset', {}, file
 
 module.exports = GitPromised
