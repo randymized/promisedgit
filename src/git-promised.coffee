@@ -77,7 +77,7 @@ class GitPromised
       b: true
 
     @cmd 'status', options
-      .then (raw) => Status.parse(raw, this)
+      .then (raw) => new Status(raw, this)
 
   # Public: Get an array of commits from the current repo.
   #
