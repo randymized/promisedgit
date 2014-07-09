@@ -10,8 +10,8 @@ File = require './file'
 class Treeish
   # Public: Constructs a new instance of {Treeish}.
   #
-  # @ref  - The object ref as {String}.
-  # @repo - The repository as {GitPromised}.
+  # ref  - The object ref as {String}.
+  # repo - The repository as {GitPromised}.
   #
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->

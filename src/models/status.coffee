@@ -27,9 +27,9 @@ class Status
       mode = line.substring(0, 2)
       path = line.substring(3)
       file = new File(path, repo, mode)
-      staged.push file if file.staged()
-      unstaged.push file if file.unstaged()
-      untracked.push file if file.untracked()
+      staged.push file if file.isStaged()
+      unstaged.push file if file.isUnstaged()
+      untracked.push file if file.isUntracked()
 
     new Status(branch, staged, unstaged, untracked)
 

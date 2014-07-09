@@ -6,40 +6,73 @@ fs = require 'fs'
 
 # Public: Represents a file and its status.
 class File
+  # Public: Constructs a new instance of {File}.
+  #
+  # filePath - The file path as {String}.
+  # repo     - The repository as {GitPromised}.
+  # mode     - The porcelain status as {String}.
   constructor: (@filePath, @repo, @mode='  ') ->
     throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
     throw new Error('No valid filePath!!!') unless (typeof(@filePath) is 'string')
     @parseMode()
 
+  # Public: Update the porcelain status.
+  #
+  # mode - The porcelain status as {String}.
   update: (@mode) ->
     @parseMode()
 
+  # Internal: Parses the porcelain status.
   parseMode: ->
     @modeIndex = @mode.substring(0, 1)
     @modeWorkingTree = @mode.substring(1, 2)
 
-  added: ->
+  # Public: Test if the file is added.
+  #
+  # Returns: {Boolean}
+  isAdded: ->
     @mode.contains('A')
 
-  copied: ->
+  # Public: Test if the file is copied.
+  #
+  # Returns: {Boolean}
+  isCopied: ->
     @mode.contains('C')
 
-  deleted: ->
+  # Public: Test if the file is deleted.
+  #
+  # Returns: {Boolean}
+  isDeleted: ->
     @mode.contains('D')
 
-  modified: ->
+  # Public: Test if the file is modified.
+  #
+  # Returns: {Boolean}
+  isModified: ->
     @mode.contains('M')
 
-  renamed: ->
+  # Public: Test if the file is renamed.
+  #
+  # Returns: {Boolean}
+  isRenamed: ->
     @mode.contains('R')
 
-  staged: ->
+  # Public: Test if the file is staged.
+  #
+  # Returns: {Boolean}
+  isStaged: ->
     /[ACDMR]/g.test @modeIndex
 
-  unstaged: ->
+  # Public: Test if the file is unstaged.
+  #
+  # Returns: {Boolean}
+  isUnstaged: ->
     /[ACDMR]/g.test @modeWorkingTree
 
-  untracked: ->
+  # Public: Test if the file is untracked.
+  #
+  # Returns: {Boolean}
+  isUntracked: ->
     @mode is '??'
 
 module.exports = File
