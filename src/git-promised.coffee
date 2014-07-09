@@ -64,7 +64,7 @@ class GitPromised
 
     git(command, options, args, @cwd)
 
-  # Public: constructor the cwd.
+  # Public: Initialize the git repo.
   init: ->
     @cmd 'init'
 
