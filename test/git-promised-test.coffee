@@ -205,9 +205,11 @@ describe 'Git-Promised', ->
             o.staged.should.have.length(1)
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
+
       describe 'when it does not exist', ->
         it 'rejects the promise', ->
           git.checkoutFile('e.coffee').should.be.rejected
+
     describe 'when we pass nothing', ->
       it 'checks out all files', ->
         git.checkoutFile()
@@ -507,16 +509,20 @@ describe 'Git-Promised', ->
 
   describe '#tags()', ->
     git = new Git(prepareFixture('tagsTest'))
+
     before ->
       git.init()
+
     describe 'when we pass no max number of tags to show', ->
       it 'shows the last 15 or less if there are less', ->
         git.getTags().should.eventually.have.length(2)
+
     describe 'when we pass a max number of tags', ->
       it 'only shows the N newest tags sorted by authordate', ->
         git.getTags(1).then (tags) ->
           tags.should.have.length(1)
           tags[0].ref.should.eql '4th'
+
     describe 'when the repo has no tags', ->
       it 'rejects the promise', ->
         git = new Git(prepareFixture('testDir'))
