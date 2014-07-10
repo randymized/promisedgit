@@ -95,8 +95,8 @@ class GitPromised
   #
   # Returns: Promise that resolves to the stdout/stderr.
   cmd: (command, options, args) ->
-    if options instanceof Array or options instanceof String
-      [options, args] = [args, options]
+    if _.isArray(options) or _.isString(options)
+      [options, args] = [null, options]
     options ?= {}
     args ?= []
 
