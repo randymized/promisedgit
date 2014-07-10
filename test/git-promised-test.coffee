@@ -104,14 +104,14 @@ describe 'Git-Promised', ->
         describe 'when it contains unstaged diffs', ->
           it 'resolves with a Diff object', ->
             git.getDiff('b.coffee').then (o) ->
-              diffRaw = """diff --git a/b.coffee b/b.coffee
+              diffRaw = '''diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
                           --- a/b.coffee
                           +++ b/b.coffee
                           @@ -6,3 +6,3 @@ grade = (student) ->
                              else
                           -    "C"
-                          +    "F"\n \n#{ }"""
+                          +    "F"\n \n'''
               o.raw.should.eql diffRaw
 
         describe 'when it contains no diffs', ->
@@ -140,14 +140,14 @@ describe 'Git-Promised', ->
         it 'returns Diff-Objects for the files that have diffs', ->
           git.getDiff(['a.coffee', 'b.coffee']).then (o) ->
             o.should.have.length(1)
-            diffRaw = """diff --git a/b.coffee b/b.coffee
+            diffRaw = '''diff --git a/b.coffee b/b.coffee
                           index 3463c49..6232e25 100644
                           --- a/b.coffee
                           +++ b/b.coffee
                           @@ -6,3 +6,3 @@ grade = (student) ->
                              else
                           -    "C"
-                          +    "F"\n \n#{ }"""
+                          +    "F"\n \n'''
             o[0].raw.should.eql diffRaw
 
       describe 'when none of them contain diffs', ->
@@ -226,9 +226,9 @@ describe 'Git-Promised', ->
       git = new Git(prepareFixture('testDir'))
       git.init()
 
-    describe "when we reset without passing a treeish (defaults to HEAD)", ->
-      describe "when we use no or the --mixed flag", ->
-        it "removes the file from index, leaves it in working tree", ->
+    describe 'when we reset without passing a treeish (defaults to HEAD)', ->
+      describe 'when we use no or the --mixed flag', ->
+        it 'removes the file from index, leaves it in working tree', ->
           git.reset()
           .then -> git.status()
           .then (o) ->
@@ -236,8 +236,8 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(2)
             o.untracked.should.have.length(1)
 
-      describe "when we use the --soft flag", ->
-        it "leaves the added file in the index", ->
+      describe 'when we use the --soft flag', ->
+        it 'leaves the added file in the index', ->
           git.reset({soft: true})
           .then -> git.status()
           .then (o) ->
@@ -245,8 +245,8 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(1)
             o.untracked.should.have.length(1)
 
-      describe "when we use the --hard flag", ->
-        it "removes the file from index and working tree", ->
+      describe 'when we use the --hard flag', ->
+        it 'removes the file from index and working tree', ->
           git.reset({hard: true})
           .then -> git.status()
           .then (o) ->
@@ -254,9 +254,9 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
 
-    describe "when we reset to a specific treeish", ->
-      describe "when we use no or the --mixed flag", ->
-        it "resets to HEAD~1, changes stay in the working tree", ->
+    describe 'when we reset to a specific treeish', ->
+      describe 'when we use no or the --mixed flag', ->
+        it 'resets to HEAD~1, changes stay in the working tree', ->
           git.reset('HEAD~1')
           .then -> git.status()
           .then (o) ->
@@ -264,8 +264,8 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(2)
             o.untracked.should.have.length(1)
 
-      describe "when we use the --soft flag", ->
-        it "resets to HEAD~1, changes stay in the index and working tree", ->
+      describe 'when we use the --soft flag', ->
+        it 'resets to HEAD~1, changes stay in the index and working tree', ->
           git.reset('HEAD~1', {soft: true})
           .then -> git.status()
           .then (o) ->
@@ -273,8 +273,8 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(1)
             o.untracked.should.have.length(1)
 
-      describe "when we use the --hard flag", ->
-        it "resets to HEAD~1, all changes get discarded completely", ->
+      describe 'when we use the --hard flag', ->
+        it 'resets to HEAD~1, all changes get discarded completely', ->
           git.reset('HEAD~1', {hard: true})
           .then -> git.status()
           .then (o) ->
@@ -353,14 +353,14 @@ describe 'Git-Promised', ->
   describe '#show()', ->
     git = new Git(prepareFixture('testDir'))
     fileString   = 'a.coffee'
-    fileInstance = new File fileString, git
+    fileInstance = new File(fileString, git)
     fileNotExistingString = 'e.coffee'
-    fileNotExistingInstance = new File fileNotExistingString, git
+    fileNotExistingInstance = new File(fileNotExistingString, git)
 
     treeishString   = 'ac657698c7630e3b65f575912aff76bf581f335f'
-    treeishInstance = new Treeish treeishString, git
+    treeishInstance = new Treeish(treeishString, git)
     treeishNotExistingString   = 'ac657698c7630e3b66g775912aff76bf581f335f'
-    treeishNotExistingInstance = new Treeish treeishNotExistingString, git
+    treeishNotExistingInstance = new Treeish(treeishNotExistingString, git)
 
     fileContent = '''
           # Assignment:

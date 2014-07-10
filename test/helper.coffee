@@ -9,10 +9,10 @@ temp   = require('temp').track()
 
 chai = require 'chai'
 chai.should()
-chai.use require("chai-as-promised")
+chai.use require('chai-as-promised')
 
 module.exports = (fixtureName) ->
-  return throw new Error 'No fixtureName given!' unless fixtureName?
+  return throw new Error('No fixtureName given!') unless fixtureName?
 
   tempPath    = temp.mkdirSync('git-promised-test')
   fixturePath = path.join __dirname, 'fixtures', fixtureName
