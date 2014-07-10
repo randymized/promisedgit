@@ -224,7 +224,7 @@ class GitPromised
     @cmd 'reset', options, treeish
 
   # Public: Wrapper for git-show.
-  #         If you pass treeish and file you get the file@treeish.
+  #         If you pass treeish and file you get the file at treeish.
   #         If you only pass treeish you get the head of treeish.
   #         If you only pass file you get the changes made by HEAD to file.
   #
