@@ -44,7 +44,7 @@ class GitPromised
   #
   # Returns: The {GitPromised} instance.
   constructor: (@cwd) ->
-    return throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
+    throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true
 
   # Public: Add file(s) to the index.
@@ -112,7 +112,8 @@ class GitPromised
   commit: (message, options={}) ->
 
     # If nothing gets passed for message abort.
-    return Promise.reject('No commit message!') unless typeof(message) is 'string'
+    error = new Error('No commit message!')
+    return Promise.reject(error) unless typeof(message) is 'string'
 
     # Set '--cleanup=strip' unless '--cleanup' has already been set.
     options.cleanup = 'strip' unless 'cleanup' of options
@@ -135,7 +136,10 @@ class GitPromised
   # Returns: Promise resolving to {Diff} if you passed a single path or to an
   #          {Array} of {Diff}s if you passed an {Array} or nothing for file.
   getDiff: (file, options={}) ->
-    if not (file instanceof File) and not (typeof(file) is 'string') and not Array.isArray(file)
+    if not (file instanceof File) and
+    not (typeof(file) is 'string') and
+    not Array.isArray(file)
+
       options = file if file?
       file = null
     if not ('treeish' of options) and not file?
@@ -236,13 +240,17 @@ class GitPromised
   show: (treeish, file, options) ->
     [treeish, file] = [file, treeish] if file instanceof Treeish
     [treeish, file] = [file, treeish] if treeish instanceof File
-    if treeish instanceof Object and not (typeof(treeish) is 'string') and not options?
+
+    if treeish instanceof Object and
+    typeof(treeish) isnt 'string' and
+    not options?
       [treeish, options] = [options, treeish] unless treeish instanceof Treeish
-    if file instanceof Object and not (typeof(file) is 'string') and not options?
+    if file instanceof Object and typeof(file) isnt 'string' and not options?
       [file, options] = [options, file] unless file instanceof File
 
-    if not file? and (typeof(treeish) is 'string')
-      [treeish, file] = [file, treeish] if fs.existsSync(path.join(@cwd, treeish))
+    if not file? and typeof(treeish) is 'string'
+      isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, treeish))
+      [treeish, file] = [file, treeish] if isTreeishAnExistingPath
 
     treeish = treeish.ref if treeish instanceof Treeish
     treeish = '' unless typeof treeish is 'string'
