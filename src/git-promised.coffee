@@ -2,10 +2,10 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_            = require 'underscore'
-fs           = require 'fs'
-path         = require 'path'
-Promise      = require 'bluebird'
+_       = require 'lodash'
+fs      = require 'fs'
+path    = require 'path'
+Promise = require 'bluebird'
 
 git = require './git-wrapper'
 {Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
@@ -113,10 +113,10 @@ class GitPromised
 
     # If nothing gets passed for message abort.
     error = new Error('No commit message!')
-    return Promise.reject(error) unless typeof(message) is 'string'
+    return Promise.reject(error) unless _.isString(message)
 
     # Set '--cleanup=strip' unless '--cleanup' has already been set.
-    options.cleanup = 'strip' unless 'cleanup' of options
+    options.cleanup = 'strip' unless _.has(options, 'cleanup')
 
     if fs.existsSync(message)
       options.file = message
@@ -136,20 +136,16 @@ class GitPromised
   # Returns: Promise resolving to {Diff} if you passed a single path or to an
   #          {Array} of {Diff}s if you passed an {Array} or nothing for file.
   getDiff: (file, options={}) ->
-    if not (file instanceof File) and
-    not (typeof(file) is 'string') and
-    not Array.isArray(file)
+    [options, file] = [file, null] if _.isPlainObject(file)
 
-      options = file if file?
-      file = null
-    if not ('treeish' of options) and not file?
+    if not (_.has(options, 'treeish') or file?)
       @status().then (o) =>
         paths = if 'cached' of options
           o.staged.map ({filePath}) -> filePath
         else
           o.unstaged.map ({filePath}) -> filePath
         @getDiff(paths, options)
-    else if file instanceof Array
+    else if _.isArray(file)
       diffs = for filePath in file
         @getDiff(filePath, options)
         .then (diff) -> diff
@@ -190,7 +186,7 @@ class GitPromised
   #
   # Returns:  Promise resolving to an {Array} of {Commit}s.
   log: (treeish='HEAD', limit=15, skip=0) ->
-    [treeish, limit] = ['HEAD', treeish] if typeof(treeish) is 'number'
+    [treeish, limit] = ['HEAD', treeish] if _.isNumber(treeish)
     options =
       'header': true
       'skip': skip
@@ -223,7 +219,7 @@ class GitPromised
   # Returns: Promise.
   reset: (treeish='HEAD', options={}) ->
     treeish = treeish.ref if treeish instanceof Treeish
-    [treeish, options] = ['HEAD', treeish] if typeof(treeish) is 'object'
+    [treeish, options] = ['HEAD', treeish] if _.isPlainObject(treeish)
 
     @cmd 'reset', options, treeish
 
@@ -241,21 +237,17 @@ class GitPromised
     [treeish, file] = [file, treeish] if file instanceof Treeish
     [treeish, file] = [file, treeish] if treeish instanceof File
 
-    if treeish instanceof Object and
-    typeof(treeish) isnt 'string' and
-    not options?
-      [treeish, options] = [options, treeish] unless treeish instanceof Treeish
-    if file instanceof Object and typeof(file) isnt 'string' and not options?
-      [file, options] = [options, file] unless file instanceof File
+    [options, file]    = [file, null]    if _.isPlainObject(file)
+    [options, treeish] = [treeish, null] if _.isPlainObject(treeish)
 
-    if not file? and typeof(treeish) is 'string'
+    if not file? and _.isString(treeish)
       isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, treeish))
       [treeish, file] = [file, treeish] if isTreeishAnExistingPath
 
     treeish = treeish.ref if treeish instanceof Treeish
-    treeish = '' unless typeof treeish is 'string'
+    treeish = '' unless _.isString(treeish)
     file = file.filePath if file instanceof File
-    file = '' unless typeof file is 'string'
+    file = '' unless _.isString(file)
     file = ":#{file}" unless file.length is 0 or treeish.length is 0
 
     @cmd 'show', options, "#{treeish}#{file}"
@@ -279,7 +271,7 @@ class GitPromised
   # Returns: Promise.
   unstage: (file) ->
     return Promise.reject('No file given') unless file?
-    file = [file] unless file instanceof Array
+    file = [file] unless _.isArray(file)
     file.unshift 'HEAD', '--'
 
     @cmd 'reset', {}, file

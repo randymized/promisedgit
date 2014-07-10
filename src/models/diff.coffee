@@ -2,8 +2,6 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_ = require 'underscore'
-
 # Public: Represents the diffs of a file.
 class Diff
   # Public: Constructs a new instance of {Diff}.

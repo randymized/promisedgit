@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_       = require 'underscore'
+_       = require 'lodash'
 fs      = require 'fs'
 shell   = require 'shelljs'
 Promise = require 'bluebird'
@@ -22,8 +22,8 @@ class GitWrapper
   #
   # Returns: Promise that resolves to the stdout/stderr.
   @cmd: (command, options, args, cwd) ->
-    if options instanceof Array or typeof(options) is 'string'
-      [options, args] = [args, options]
+    if _.isArray(options) or _.isString(options)
+      [args, cwd] = [options, args]
     command = 'git ' + command if command.substring(0, 4) isnt 'git '
 
     # `options` and `args` are optional, `cwd` is not.
