@@ -22,8 +22,7 @@
   },
   "dependencies": {
     "bluebird": "~2.2.1",
-    "lodash": "~2.4.1",
-    "shelljs": "~0.3.0"
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "chai": "~1.9.1",
@@ -38,7 +37,6 @@
   "keywords": [
     "git",
     "promise",
-    "async",
-    "shell"
+    "async"
   ]
 }

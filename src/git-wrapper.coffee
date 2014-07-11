@@ -4,8 +4,8 @@
 
 _       = require 'lodash'
 fs      = require 'fs'
-shell   = require 'shelljs'
 Promise = require 'bluebird'
+{exec}  = require 'child_process'
 
 # Internal: GitWrapper parses our commands to and the output from the CLI. You
 #           can access it through the {GitPromised::cmd} method.
@@ -34,22 +34,15 @@ class GitWrapper
     if not fs.existsSync(cwd)
       throw new Error("'#{cwd}' is no valid repository path!")
 
-    # Supress the default shell output to user console.
-    shell.silent = true
-    shell.cd cwd ? process.cwd()
-
     args = args_to_argv(args)
     options = options_to_argv(options)
-
     command = "#{command} #{options} #{args}"
     new Promise (resolve, reject) ->
-      shell.exec command, {silent: true, async: true}, (code, output) ->
-        if code isnt 0
-          error = new Error("'#{command}' exited with error code #{code}")
-          error.code = code
-          error.stderr = output
-          reject(error)
-        resolve(output)
+      exec command,                         # Command
+      {cwd: cwd, maxBuffer: 100*1024*1024}, # Options
+      (error, stdout, stderr) ->            # Callback
+        reject error if error?
+        resolve stdout
 
   # Private: Converts the options object into an array.
   #
