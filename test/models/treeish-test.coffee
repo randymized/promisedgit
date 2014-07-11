@@ -37,7 +37,15 @@ describe 'Treeish', ->
 
     describe 'when we pass no valid ref', ->
       it 'throws', ->
-        Treeish.should.throw(null)
+        (-> new Treeish null, git).should.throw(Error)
+
+    describe 'when we pass an invalid repository object', ->
+      it 'throws', ->
+        (-> new Treeish 'HEAD', null).should.throw(Error)
+
+    describe 'when ref and repository object are valid', ->
+      it 'does not throw', ->
+        (-> new Treeish 'HEAD', git).should.not.throw(Error)
 
   describe 'when the treeish points to any object except the very first', ->
 
