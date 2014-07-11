@@ -2,7 +2,10 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
+_  = require 'lodash'
 fs = require 'fs'
+
+Treeish = require './treeish'
 
 # Public: Represents a file and its status.
 class File
@@ -12,8 +15,8 @@ class File
   # repo     - The repository as {GitPromised}.
   # mode     - The porcelain status as {String}.
   constructor: (@filePath, @repo, @mode='  ') ->
-    throw new Error('No valid git repo!!!') unless @repo?.isGitRepo
-    throw new Error('No valid filePath!!!') unless (typeof(@filePath) is 'string')
+    throw new Error('Invalid git repo.') unless @repo?.isGitRepo
+    throw new Error('Invalid file path.') unless _.isString(@filePath)
     @parseMode()
 
   # Public: Update the porcelain status.
@@ -74,5 +77,15 @@ class File
   # Returns: {Boolean}
   isUntracked: ->
     @mode is '??'
+
+  # Public: Get the content of a file at this {Treeish}.
+  #
+  # file - The file as {String}.
+  #
+  # Returns: Promise that resolves to a {String} with the content.
+  show: (treeish='HEAD') ->
+    treeish = treeish.ref if _.isString(treeish.ref)
+    return @repo.show(treeish, @filePath) if _.isString(treeish)
+    Promise.reject(new Error('Invalid ref.'))
 
 module.exports = File

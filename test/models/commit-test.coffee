@@ -2,8 +2,6 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-should = require('chai').should()
-
 Git = require '../../src/git-promised'
 prepareFixture = require '../helper'
 {Commit} = require '../../src/models'
