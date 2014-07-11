@@ -15,7 +15,7 @@ class Amend
   # Public: Constructor
   #
   # message - The original commit message as {String}.
-  # repo    - The Git object as {Object}.
+  # repo    - The repository as {GitPromised}.
   #
   # Returns: A new instance of {Amend}.
   constructor: (@message='', @repo) ->
