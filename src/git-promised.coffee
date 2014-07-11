@@ -156,7 +156,7 @@ class GitPromised
       @cmd 'diff', options, file
         .then (raw) ->
           return new Diff(file, raw) if raw?.length > 0
-          return throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
+          throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
 
   # Public: Retrieve the maxCount newest tags.
   #
@@ -230,7 +230,7 @@ class GitPromised
   #
   # treeish - The {String} or {Treeish} to show.
   # file    - The {String} or {File} to show.
-  # options - The {Object} options.
+  # options - The options as plain {Object}.
   #
   # Returns: Promise.
   show: (treeish, file, options) ->

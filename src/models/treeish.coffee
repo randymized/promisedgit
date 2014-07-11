@@ -2,6 +2,8 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
+_ = require 'lodash'
+
 Diff = require './diff'
 File = require './file'
 
@@ -15,8 +17,8 @@ class Treeish
   #
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->
+    throw new Error('No valid ref!') unless _.isString(@ref)
     throw new Error('No valid git repo!') unless @repo?.isGitRepo
-    throw new Error('No valid ref!') unless (typeof(@ref) is 'string')
 
   # Public: Checkout the {Treeish} in git.
   #
@@ -55,9 +57,9 @@ class Treeish
   #
   # Returns: Promise that resolves to a {String} with the content.
   getFile: (file) ->
-    return throw new Error('No valid file!') unless file?
+    throw new Error('No valid file!') unless file?
     return file.show(@ref) if file instanceof File
-    @repo(@ref, file)
+    @repo.show(@ref, file)
 
   # Public: Reset the current branch to this {Treeish}.
   #

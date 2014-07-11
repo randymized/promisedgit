@@ -20,7 +20,7 @@ class Amend
   # Returns: A new instance of {Amend}.
   constructor: (@message='', @repo) ->
     [@message, @repo] = ['', @message] if @message?.isGitRepo
-    return throw new Error('No valid git repo!') unless @repo?.isGitRepo
+    throw new Error('No valid git repo!') unless @repo?.isGitRepo
 
     @message = "#{@message?.trim()}\n"
     @repo.reset 'HEAD^', soft: true
@@ -43,6 +43,12 @@ class Amend
     @repo.commit(message).then (stdout) =>
       @destroy()
       stdout
+
+  # Public: Get the original commit message.
+  #
+  # Returns the original commit message as {String}.
+  getAmendMessage: ->
+    @message
 
   # Public: Destroy amend object.
   destroy: ->

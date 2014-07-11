@@ -32,7 +32,7 @@ class GitWrapper
       [args, cwd] = [null, args] if fs.existsSync(options)
 
     if not fs.existsSync(cwd)
-      return throw new Error("'#{cwd}' is no valid repository path!")
+      throw new Error("'#{cwd}' is no valid repository path!")
 
     # Supress the default shell output to user console.
     shell.silent = true
