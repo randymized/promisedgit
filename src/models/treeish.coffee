@@ -30,7 +30,7 @@ class Treeish
   #
   # Returns: Promise that resolves to a {Diff}.
   diff: ->
-    @repo.show(@ref, pretty: 'raw').then (raw) ->
+    @repo.cmd('diff', [@ref, "#{@ref}~"]).then (raw) ->
       new Diff(null, raw)
 
   # Public: Get the diff to another {Treeish}.
