@@ -47,7 +47,7 @@ class GitPromised
 
   # Public: Add file(s) to the index.
   #
-  # file - The file(s) to add to the index as {String}, {File} or {Array} of
+  # file - The file(s) to add to the index as {String}, {File} or an {Array} of
   #        the former.
   #
   # Returns: Promise.
@@ -78,13 +78,22 @@ class GitPromised
 
   # Public: Checkout file.
   #
-  # file - The file(s) to add to the index as {String}, {File} or {Array} of
+  # file - The file(s) to add to the index as {String}, {File} or an {Array} of
   #        the former.
+  # oid  - The oid to check the file out to.
   #
   # Returns:  Promise.
-  checkoutFile: (file) ->
-    options = {f: true} unless file?
-    @cmd 'checkout', options, file
+  checkoutFile: (file, oid='HEAD') ->
+    if _.isArray(file)
+      file = _.map file, (val) ->
+        if val instanceof File then val.path else val
+      file.unshift(oid, '--')
+    else if _.isString(file)
+      file = [oid, '--', file]
+    else
+      return Promise.reject new Error("Invalid file: '#{file}'")
+
+    @cmd 'checkout', {f: true}, file
 
   # Public: Access to the {GitWrapper}. Use it to execute custom git commands.
   #

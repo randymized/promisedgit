@@ -211,13 +211,8 @@ describe 'Git-Promised', ->
           git.checkoutFile('e.coffee').should.be.rejected
 
     describe 'when we pass nothing', ->
-      it 'checks out all files', ->
-        git.checkoutFile()
-        .then -> git.status()
-        .then (o) ->
-          o.staged.should.have.length(0)
-          o.unstaged.should.have.length(0)
-          o.untracked.should.have.length(1)
+      it 'rejects the promise', ->
+        git.checkoutFile().should.be.rejected
 
   describe '#reset()', ->
 
