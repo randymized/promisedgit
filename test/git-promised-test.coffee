@@ -58,15 +58,15 @@ describe 'Git-Promised', ->
           o.branch.should.eql 'master'
           # 1 Staged file
           o.staged.should.have.length(1)
-          o.staged[0].filePath.should.eql 'a.coffee'
+          o.staged[0].path.should.eql 'a.coffee'
           o.staged[0].mode.should.eql 'M '
           # 1 Unstaged file
           o.unstaged.should.have.length(1)
-          o.unstaged[0].filePath.should.eql 'b.coffee'
+          o.unstaged[0].path.should.eql 'b.coffee'
           o.unstaged[0].mode.should.eql ' M'
           # 1 Untracked file
           o.untracked.should.have.length(1)
-          o.untracked[0].filePath.should.eql 'd.coffee'
+          o.untracked[0].path.should.eql 'd.coffee'
           o.untracked[0].mode.should.eql '??'
 
   describe '#log()', ->
@@ -125,14 +125,14 @@ describe 'Git-Promised', ->
       it 'returns all diffs in workingTree', ->
         git.getDiff().then (o) ->
           o.should.have.length(1)
-          o[0].filePath.should.eql 'b.coffee'
+          o[0].path.should.eql 'b.coffee'
           o[0].chunks.should.have.length(1)
 
       describe 'when we set the --cached flag', ->
         it 'returns all diffs in index', ->
           git.getDiff({cached: true}).then (o) ->
             o.should.have.length(1)
-            o[0].filePath.should.eql 'a.coffee'
+            o[0].path.should.eql 'a.coffee'
             o[0].chunks.should.have.length(1)
 
     describe 'when we pass multiple files', ->
@@ -423,6 +423,7 @@ describe 'Git-Promised', ->
     describe 'when we pass an oid and a file', ->
 
       describe 'when we pass a Treeish instance and a File instance', ->
+
         describe 'when both are existing in repo', ->
           it 'returns the file at oid', ->
             git.show(oidInstance, fileInstance).should.eventually.eql fileContent
@@ -433,8 +434,8 @@ describe 'Git-Promised', ->
             git.show(oidInstance, fileNotExistingInstance)
             .should.eventually.be.rejected
 
-
       describe 'when we pass a Treeish instance and a file string', ->
+
         describe 'when both are existing in repo', ->
           it 'returns the file at oid', ->
             git.show(oidInstance, fileString).should.eventually.eql fileContent
@@ -445,8 +446,8 @@ describe 'Git-Promised', ->
             git.show(oidInstance, fileNotExistingString)
             .should.eventually.be.rejected
 
-
       describe 'when we pass a oid string and a File instance', ->
+
         describe 'when both are existing in repo', ->
           it 'returns the file at oid', ->
             git.show(oidString, fileInstance).should.eventually.eql fileContent
@@ -457,8 +458,8 @@ describe 'Git-Promised', ->
             git.show(oidString, fileNotExistingInstance)
             .should.eventually.be.rejected
 
-
       describe 'when we pass a oid string and a file string', ->
+
         describe 'when both are existing in repo', ->
           it 'returns the file at oid', ->
             git.show(oidString, fileString).should.eventually.eql fileContent
@@ -544,9 +545,9 @@ describe 'Git-Promised', ->
           git.commit(commitMessage).should.eventually.contain commitMessage
       describe 'when we pass a valid file path', ->
         it 'commits using the content as commit message', ->
-          filePath = path.join git.cwd, '.git/COMMIT_EDITMSG'
+          path = path.join git.cwd, '.git/COMMIT_EDITMSG'
           commitMessage = 'Damn boy, such importance'
-          git.commit(filePath).should.eventually.contain commitMessage
+          git.commit(path).should.eventually.contain commitMessage
 
       describe 'when we pass nothing', ->
         it 'rejects the promise', ->

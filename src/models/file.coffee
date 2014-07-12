@@ -11,12 +11,12 @@ Treeish = require './treeish'
 class File
   # Public: Constructs a new instance of {File}.
   #
-  # filePath - The file path as {String}.
+  # path - The file path as {String}.
   # repo     - The repository as {GitPromised}.
   # mode     - The porcelain status as {String}.
-  constructor: (@filePath, @repo, @mode='  ') ->
+  constructor: (@path, @repo, @mode='  ') ->
     throw new Error('Invalid git repo.') unless @repo?.isGitRepo
-    throw new Error('Invalid file path.') unless _.isString(@filePath)
+    throw new Error('Invalid file path.') unless _.isString(@path)
     @parseMode()
 
   # Public: Update the porcelain status.
@@ -85,7 +85,7 @@ class File
   # Returns: Promise that resolves to a {String} with the content.
   show: (oid='HEAD') ->
     oid = oid.ref if _.isString(oid.ref)
-    return @repo.show(oid, @filePath) if _.isString(oid)
-    Promise.reject(new Error('Invalid ref.'))
+    return @repo.show(oid, @path) if _.isString(oid)
+    Promise.reject(new Error('Invalid oid.'))
 
 module.exports = File

@@ -141,9 +141,9 @@ class GitPromised
     if not (_.has(options, 'treeish') or file?)
       @status().then (o) =>
         paths = if 'cached' of options
-          o.staged.map ({filePath}) -> filePath
+          _.map(o.staged, 'path')
         else
-          o.unstaged.map ({filePath}) -> filePath
+          _.map(o.unstaged, 'path')
         @getDiff(paths, options)
     else if _.isArray(file)
       diffs = for filePath in file
@@ -248,8 +248,8 @@ class GitPromised
     [oid, file] = [file, oid] if file instanceof Treeish
     [oid, file] = [file, oid] if oid instanceof File
 
-    [options, file]    = [file, null]    if _.isPlainObject(file)
-    [options, oid] = [oid, null] if _.isPlainObject(oid)
+    [options, file] = [file, null] if _.isPlainObject(file)
+    [options, oid]  = [oid, null]  if _.isPlainObject(oid)
 
     if not file? and _.isString(oid)
       isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, oid))
@@ -257,7 +257,7 @@ class GitPromised
 
     oid = oid.ref if oid instanceof Treeish
     oid = '' unless _.isString(oid)
-    file = file.filePath if file instanceof File
+    file = file.path if file instanceof File
     file = '' unless _.isString(file)
     file = ":#{file}" unless file.length is 0 or oid.length is 0
 

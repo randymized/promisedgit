@@ -204,8 +204,9 @@ mocha = (options, callback) ->
     callback = options
     options = []
   # add coffee directive
+  options.push '--inline-diffs'
   options.push '--compilers'
-  options.push "coffee:./node_modules/coffee-script/lib/coffee-script/register"
+  options.push 'coffee:./node_modules/coffee-script/lib/coffee-script/register'
   options.push '--reporter'
   options.push 'spec'
 

@@ -6,9 +6,9 @@
 class Diff
   # Public: Constructs a new instance of {Diff}.
   #
-  # filePath - The path to the fill that was diffed as {String}.
+  # path - The path to the fill that was diffed as {String}.
   # raw      - The raw diff data as {String}.
-  constructor: (@filePath, @raw='') ->
+  constructor: (@path, @raw='') ->
     @chunks = [] = @raw.split(/^@@(?=[ \-\+\,0-9]*@@)/gm)
     @chunks = ('@@' + line for line in @chunks[1..])
 

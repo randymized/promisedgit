@@ -27,17 +27,17 @@ describe 'Status', ->
     it 'returns the correct staged files', ->
       staged = statusParsed.staged
       staged.length.should.eql 1
-      staged[0].filePath.should.eql 'a.coffee'
+      staged[0].path.should.eql 'a.coffee'
 
     it 'returns the correct unstaged files', ->
       unstaged = statusParsed.unstaged
       unstaged.length.should.eql 1
-      unstaged[0].filePath.should.eql 'b.coffee'
+      unstaged[0].path.should.eql 'b.coffee'
 
     it 'returns the correct untracked files', ->
       untracked = statusParsed.untracked
       untracked.length.should.eql 1
-      untracked[0].filePath.should.eql 'd.coffee'
+      untracked[0].path.should.eql 'd.coffee'
 
   describe 'when we pass an invalid repository object', ->
     it 'throws an Error', ->
