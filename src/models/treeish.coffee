@@ -12,7 +12,7 @@ File = require './file'
 # upon any kind of treeish object in git.
 class Treeish
 
-  # Private: Git magic root commit hash.
+  # Private: Git empty tree hash.
   GIT_ROOT_COMMIT = '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
 
   # Public: Constructs a new instance of {Treeish}.

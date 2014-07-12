@@ -85,7 +85,7 @@ class GitPromised
     options = {f: true} unless file?
     @cmd 'checkout', options, file
 
-  # Public: Access to the GitWrapper. Use it to execute custom git commands.
+  # Public: Access to the {GitWrapper}. Use it to execute custom git commands.
   #
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
