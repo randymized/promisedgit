@@ -120,10 +120,9 @@ class GitPromised
   #
   # Returns: Promise
   commit: (message, options={}) ->
-
     # If nothing gets passed for message abort.
-    error = new Error('No commit message!')
-    return Promise.reject(error) unless _.isString(message)
+    if not _.isString(message)
+      return Promise.reject(new Error('No commit message!'))
 
     # Set '--cleanup=strip' unless '--cleanup' has already been set.
     options.cleanup = 'strip' unless _.has(options, 'cleanup')
@@ -188,19 +187,19 @@ class GitPromised
   init: ->
     @cmd 'init'
 
-  # Public: Get an array of commits from the current repo.
+  # Public: Get the log for the current repository.
   #
-  # oid   - The {String} Treeish.
+  # ref   - The ref to get the log for as {String}.
   # limit - The maximum amount of commits to show as {Number}.
   #
   # Returns:  Promise resolving to an {Array} of {Commit}s.
-  log: (oid='HEAD', limit=15) ->
-    [oid, limit] = ['HEAD', oid] if _.isNumber(oid)
+  log: (ref='HEAD', limit=15) ->
+    [ref, limit] = ['HEAD', ref] if _.isNumber(ref)
     options =
       'header': true
       'max-count': limit
 
-    @cmd 'rev-list', options, oid
+    @cmd 'rev-list', options, ref
       .then (commitsRaw) =>
         commitsRaw = commitsRaw.split('\0')?[...-1] or []
         new Commit(raw, this) for raw in commitsRaw
