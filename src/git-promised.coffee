@@ -47,14 +47,14 @@ class GitPromised
 
   # Public: Add file(s) to the index.
   #
-  # file - The file(s) to add to the index as {String}, {File} or an {Array} of
-  #        the former.
+  # file - The file(s) to add as {String}|{Treeish}|{Array}.
   #
   # Returns: Promise.
   add: (file) ->
     if _.isArray(file)
-      file = _.map file, (val) ->
-        if val instanceof File then val.path else val
+      file = _.map file, (val) -> if val instanceof File then val.path else val
+    else if file instanceof File
+      file = file.path
     else if not _.isString(file)
       file = '.'
 
