@@ -342,8 +342,13 @@ describe 'Git-Promised', ->
             o.untracked.should.have.length(1)
 
     describe 'when we pass nothing', ->
-      it 'rejects the promise', ->
-        git.unstage().should.be.rejected
+      it 'unstages all files from the index', ->
+        git.unstage()
+        .then -> git.status()
+        .then (o) ->
+          o.staged.should.have.length(0)
+          o.unstaged.should.have.length(2)
+          o.untracked.should.have.length(1)
 
   describe '#show()', ->
     git = new Git(prepareFixture('testDir'))

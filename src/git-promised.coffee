@@ -283,17 +283,20 @@ class GitPromised
     @cmd 'status', options
       .then (raw) => new Status(raw, this)
 
-  # Public: Remove given file(s) from the index but leave it/them in the
-  #         working tree.
+  # Public: Unstage file(s) from the index.
   #
-  # file - The {String} or {Array} of files to unstage.
+  # file - The file(s) to unstage as {String}|{Treeish}|{Array}.
+  #        If you pass nothing or a '.' it will unstage all files from index.
   #
   # Returns: Promise.
   unstage: (file) ->
-    return Promise.reject(new Error('No file given')) unless file?
-    file = [file] unless _.isArray(file)
-    file.unshift 'HEAD', '--'
+    if _.isArray(file)
+      file = _.map file, (val) -> if val instanceof File then val.path else val
+    else if file instanceof File
+      file = file.path
+    else if not _.isString(file)
+      file = '.'
 
-    @cmd 'reset', {}, file
+    @cmd 'reset', {treeish: 'HEAD'}, file
 
 module.exports = GitPromised
