@@ -80,7 +80,7 @@ class File
 
   # Public: Get the content of a file at this {Treeish}.
   #
-  # oid - The oid to show the file at as {String} or {Treeish}.
+  # oid - The oid to show the file at as {String}|{Treeish}.
   #
   # Returns: Promise that resolves to the content at oid as {String}.
   show: (oid='HEAD') ->

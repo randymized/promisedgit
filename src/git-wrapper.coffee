@@ -16,7 +16,7 @@ class GitWrapper
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
   #           :treeish - Set a treeish range, for example `HEAD..HEAD~5`.
-  # args    - The args to pass as {String} or {Array}.
+  # args    - The args to pass as {String}|{Array}.
   # cwd     - The current working directory as {String}.
   #
   # Returns a Promise that resolves to the git cli output.
@@ -67,7 +67,7 @@ class GitWrapper
 
   # Private: Escapes the argument(s) and formats them.
   #
-  # args - The arguments as {String} or {Array}.
+  # args - The arguments as {String}|{Array}.
   #
   # Returns the escaped and formatted arguments as {String}.
   args_to_argv = (args=[]) ->

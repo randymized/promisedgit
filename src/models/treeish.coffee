@@ -45,7 +45,7 @@ class Treeish
 
   # Public: Get the diff to another {Treeish}.
   #
-  # oid     - The oid to diff against as {String} or {Treeish}.
+  # oid     - The oid to diff against as {String}|{Treeish}.
   # options - The options as plain {Object}.
   #
   # Returns a Promise that resolves to an instance of {Diff}.
@@ -57,7 +57,7 @@ class Treeish
 
   # Public: Get the diff from another {Treeish}.
   #
-  # oid     - The oid to diff against as {String} or {Treeish}.
+  # oid     - The oid to diff against as {String}|{Treeish}.
   # options - The options as plain {Object}.
   #
   # Returns a Promise that resolves to an instance of {Diff}.

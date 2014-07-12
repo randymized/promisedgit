@@ -47,7 +47,7 @@ class GitPromised
 
   # Public: Add file(s) to the index.
   #
-  # file - The file(s) to add as {String}|{Treeish}|{Array}.
+  # file - The file(s) to add as {String}|{File}|{Array}.
   #
   # Returns: Promise.
   add: (file) ->
@@ -69,7 +69,7 @@ class GitPromised
 
   # Public: Checkout a oid.
   #
-  # oid     - The oid to checkout as {String} or {Treeish}.
+  # oid     - The oid to checkout as {String}|{Treeish}.
   # options - The options as plain {Object}.
   #
   # Returns: Promise.
@@ -101,7 +101,7 @@ class GitPromised
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
   #           :treeish - Set a treeish range, for example `HEAD..HEAD~5`.
-  # args    - The args to pass as {String} or {Array}.
+  # args    - The args to pass as {String}|{Array}.
   #
   # Returns a Promise that resolves to the git cli output.
   cmd: (command, options, args) ->
@@ -137,8 +137,7 @@ class GitPromised
 
   # Public: Get the diff for a file.
   #
-  # file    - The {String} (or multiple in an {Array}) with the path of the file
-  #           to diff.
+  # file    - The file(s) to diff as {String}|{File}|{Array}.
   #           If you pass no file path(s), it will diff all modified files.
   # options - The {Object} with options for git-diff.
   #           :cached - {Boolean} Show the diff from index.
@@ -234,7 +233,7 @@ class GitPromised
 
   # Public: git-rev-parse oid.
   #
-  # oid - The oid to rev-parse as {String} or {Treeish}.
+  # oid - The oid to rev-parse as {String}|{Treeish}.
   #
   # Returns a Promise that resolves to the rev-parsed oid.
   revParse: (oid='HEAD', options={}) ->
@@ -248,8 +247,8 @@ class GitPromised
   #         If you only pass oid you get the head of oid.
   #         If you only pass file you get the changes made by HEAD to file.
   #
-  # oid     - The {String} or {Treeish} to show.
-  # file    - The {String} or {File} to show.
+  # oid     - The treeish to show as {String}|{Treeish}.
+  # file    - The file to show as {String}|{File}.
   # options - The options as plain {Object}.
   #
   # Returns: Promise.
@@ -285,7 +284,7 @@ class GitPromised
 
   # Public: Unstage file(s) from the index.
   #
-  # file - The file(s) to unstage as {String}|{Treeish}|{Array}.
+  # file - The file(s) to unstage as {String}|{File}|{Array}.
   #        If you pass nothing or a '.' it will unstage all files from index.
   #
   # Returns: Promise.
