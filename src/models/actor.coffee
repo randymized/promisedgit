@@ -8,7 +8,7 @@ class Actor
   #
   # raw - The raw actor as {String}.
   #
-  # Returns: An instance of Actor.
+  # Returns an instance of Actor.
   constructor: (raw) ->
     if /<.+>/.test raw
       [m, name, email] = /(.*) <(.+?)>/.exec raw
@@ -19,7 +19,7 @@ class Actor
 
   # Public: Get a string representation of the actor.
   #
-  # Returns: The formatted string representation.
+  # Returns the formatted representation as {String}.
   toString: ->
     if @email then "#{@name} <#{@email}>" else @name
 

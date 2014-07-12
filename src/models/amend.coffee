@@ -18,11 +18,11 @@ class Amend
   # repo    - The repository as {GitPromised}.
   #
   # Returns: A new instance of {Amend}.
-  constructor: (@message='', @repo) ->
-    [@message, @repo] = ['', @message] if @message?.isGitRepo
+  constructor: (@origMessage='', @repo) ->
+    [@origMessage, @repo] = ['', @origMessage] if @origMessage?.isGitRepo
     throw new Error('No valid git repo!') unless @repo?.isGitRepo
 
-    @message = "#{@message?.trim()}\n"
+    @origMessage = "#{@origMessage?.trim()}\n"
     @repo.reset 'HEAD^', soft: true
 
   # Public: Abort amending.
@@ -39,7 +39,7 @@ class Amend
   #           {String}.
   #
   # Returns: Promise.
-  commit: (message=@message) ->
+  commit: (message=@origMessage) ->
     @repo.commit(message).then (stdout) =>
       @destroy()
       stdout
@@ -48,7 +48,7 @@ class Amend
   #
   # Returns the original commit message as {String}.
   getAmendMessage: ->
-    @message
+    @origMessage
 
   # Public: Destroy amend object.
   destroy: ->
