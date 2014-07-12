@@ -50,16 +50,18 @@ class GitWrapper
   # Returns the escaped and formatted options as {String}.
   options_to_argv = (options={}) ->
     argv = []
+    treeish = null
+
     for key, val of options
-      # If there is a key named 'oid' the user specified a git oid range.
       if key is 'treeish'
-        argv.push val
+        treeish = val
       else if key.length == 1
         argv.push "-#{key} #{escapeShellArg(val)}" unless _.isBoolean(val)
         argv.push "-#{key}" if val is true
       else
         argv.push "--#{key}=#{escapeShellArg(val)}" unless _.isBoolean(val)
         argv.push "--#{key}" if val is true
+    argv.push(treeish, '--') if treeish
 
     argv.join(' ')
 
