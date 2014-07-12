@@ -16,8 +16,6 @@ class Amend
   #
   # message - The original commit message as {String}.
   # repo    - The repository as {GitPromised}.
-  #
-  # Returns: A new instance of {Amend}.
   constructor: (@origMessage='', @repo) ->
     [@origMessage, @repo] = ['', @origMessage] if @origMessage?.isGitRepo
     throw new Error('No valid git repo!') unless @repo?.isGitRepo

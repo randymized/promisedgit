@@ -15,12 +15,11 @@ class GitWrapper
   #
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
-  #           :treeish - If you need to specifiy a git oid range do it here.
-  #                      Example: `HEAD..HEAD~5`.
+  #           :treeish - Set a treeish range, for example `HEAD..HEAD~5`.
   # args    - The args to pass as {String} or {Array}.
   # cwd     - The current working directory as {String}.
   #
-  # Returns: Promise that resolves to the stdout/stderr.
+  # Returns a Promise that resolves to the git cli output.
   @cmd: (command, options, args, cwd) ->
     if _.isArray(options) or _.isString(options)
       [args, cwd] = [options, args]
@@ -48,7 +47,7 @@ class GitWrapper
   #
   # options - The options as {Object}.
   #
-  # Returns: The escaped and formatted options as {String}.
+  # Returns the escaped and formatted options as {String}.
   options_to_argv = (options={}) ->
     argv = []
     for key, val of options
@@ -66,9 +65,9 @@ class GitWrapper
 
   # Private: Escapes the argument(s) and formats them.
   #
-  # args - The arguments as {String|Array}.
+  # args - The arguments as {String} or {Array}.
   #
-  # Returns: The escaped and formatted arguments as {String}.
+  # Returns the escaped and formatted arguments as {String}.
   args_to_argv = (args=[]) ->
     if _.isArray(args)
       argv = (escapeShellArg(arg) for arg in args)
@@ -82,7 +81,7 @@ class GitWrapper
   #
   # cmd - The command to escape as {String}.
   #
-  # Returns: The escaped command as {String}.
+  # Returns the escaped command as {String}.
   escapeShellArg = (cmd) ->
     cmd = cmd.trim() if _.isString(cmd)
     cmd = '\"' + cmd.replace(/\"/g, '"\\""') + '\"' if ' ' in cmd or '"' in cmd

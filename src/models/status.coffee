@@ -45,10 +45,10 @@ class Status
   # lines - The lines as {Array}.
   # repo  - The repository as {GitPromised}.
   #
-  # Returns an {Array} with:
-  #   : 0 - The staged files as {Array}.
-  #   : 1 - The unstaged files as {Array}.
-  #   : 2 - The untacked files as {Array}.
+  # Returns an {Array} with the indices
+  #   :0 - The staged files as {Array}.
+  #   :1 - The unstaged files as {Array}.
+  #   :2 - The untacked files as {Array}.
   parseFiles = (lines, repo) ->
     staged    = []
     unstaged  = []

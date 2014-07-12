@@ -12,8 +12,8 @@ class File
   # Public: Constructs a new instance of {File}.
   #
   # path - The file path as {String}.
-  # repo     - The repository as {GitPromised}.
-  # mode     - The porcelain status as {String}.
+  # repo - The repository as {GitPromised}.
+  # mode - The porcelain status as {String}.
   constructor: (@path, @repo, @mode='  ') ->
     throw new Error('Invalid git repo.') unless @repo?.isGitRepo
     throw new Error('Invalid file path.') unless _.isString(@path)
@@ -25,7 +25,7 @@ class File
   update: (@mode) ->
     @parseMode()
 
-  # Internal: Parses the porcelain status.
+  # Internal: Parses the porcelain status stored under @mode.
   parseMode: ->
     @modeIndex = @mode.substring(0, 1)
     @modeWorkingTree = @mode.substring(1, 2)
@@ -80,9 +80,9 @@ class File
 
   # Public: Get the content of a file at this {Treeish}.
   #
-  # file - The file as {String}.
+  # oid - The oid to show the file at as {String} or {Treeish}.
   #
-  # Returns: Promise that resolves to a {String} with the content.
+  # Returns: Promise that resolves to the content at oid as {String}.
   show: (oid='HEAD') ->
     oid = oid.ref if _.isString(oid.ref)
     return @repo.show(oid, @path) if _.isString(oid)

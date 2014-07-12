@@ -22,8 +22,8 @@ class Treeish
   #
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->
-    throw new Error('No valid ref!') unless _.isString(@ref)
-    throw new Error('No valid git repo!') unless @repo?.isGitRepo
+    throw new Error('Invalid ref') unless _.isString(@ref)
+    throw new Error('Invalid repository instance') unless @repo?.isGitRepo
 
   # Public: Checkout the {Treeish} in git.
   #
@@ -37,7 +37,7 @@ class Treeish
   #
   # options - The options as plain {Object}.
   #
-  # Returns: Promise that resolves to a {Diff}.
+  # Returns a Promise that resolves to an instance of {Diff}.
   diff: (options={}) ->
     @repo.cmd('diff', options, "#{@ref}~..#{@ref}")
     .catch => @repo.cmd('diff', options, "#{GIT_ROOT_COMMIT}..#{@ref}")
@@ -48,7 +48,7 @@ class Treeish
   # oid     - The oid to diff against as {String} or {Treeish}.
   # options - The options as plain {Object}.
   #
-  # Returns: Promise that resolves to a {Diff}.
+  # Returns a Promise that resolves to an instance of {Diff}.
   diffTo: (oid='HEAD', options={}) ->
     oid = oid.ref if oid instanceof Treeish
     options = _.extend options, {treeish: "#{@ref}..#{oid}"}
@@ -60,7 +60,7 @@ class Treeish
   # oid     - The oid to diff against as {String} or {Treeish}.
   # options - The options as plain {Object}.
   #
-  # Returns: Promise that resolves to a {Diff}.
+  # Returns a Promise that resolves to an instance of {Diff}.
   diffFrom: (oid='HEAD', options={}) ->
     oid = oid.ref if oid instanceof Treeish
     options = _.extend options,{treeish: "#{oid}..#{@ref}"}
@@ -71,7 +71,8 @@ class Treeish
   #
   # file - The file as {String}.
   #
-  # Returns: Promise that resolves to a {String} with the content.
+  # Returns a Promise that resolves to a {String} with the content of file at
+  #   this treeish.
   showFile: (file) ->
     return file.show(@ref) if file instanceof File
     return @repo.show(@ref, file) if _.isString(file)

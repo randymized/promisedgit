@@ -11,8 +11,6 @@ class Tag extends Treeish
   #
   # raw  - The raw data as {String}.
   # repo - The repository as {GitPromised}.
-  #
-  # Returns: An instance of {Tag}.
   constructor: (raw, repo) ->
     [hash, ref] = @parseRaw(raw)
     super(ref, repo)
@@ -22,9 +20,9 @@ class Tag extends Treeish
 
   # Internal: Helper method to parse the raw data.
   #
-  # raw - The raw dat as {String}.
+  # raw - The raw data as {String}.
   #
-  # Returns: The formatted raw data as {Array}.
+  # Returns the formatted data as {Array}.
   parseRaw: (raw) ->
     [hash, ref] = raw.split(' ')
     ref = ref.split('refs/tags/')[1]

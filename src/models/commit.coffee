@@ -98,7 +98,7 @@ class Commit extends Treeish
   #
   # line - The raw actor line as {String}.
   #
-  # Returns an {Array} with:
+  # Returns an {Array} with the indices
   #   :0 - The {Actor}.
   #   :1 - The time as {Date}.
   actor: (line) ->

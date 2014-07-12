@@ -38,19 +38,17 @@ git = require './git-wrapper'
 #       #  3 files changed, 6 insertions(+), 2 deletions(-)
 # ```
 class GitPromised
-  # Public: Create an instance representing the git repository.
+  # Public: Construct a new {GitPromised} instance.
   #
-  # cwd - The {String} representing the cwd.
-  #
-  # Returns: The {GitPromised} instance.
+  # cwd - The path of the git repository as {String}.
   constructor: (@cwd) ->
     throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
     @isGitRepo = true
 
   # Public: Add file(s) to the index.
   #
-  # file - The {String} or {Array} of files to add to index.
-  #        Defaults to add all files!
+  # file - The file(s) to add to the index as {String}, {File} or {Array} of
+  #        the former.
   #
   # Returns: Promise.
   add: (file) ->
@@ -61,7 +59,7 @@ class GitPromised
 
   # Public: Amend HEAD.
   #
-  # Returns: Promise that resolves to an {Amend} instance.
+  # Returns a Promise that resolves to an instance of {Amend}.
   amend: ->
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
@@ -69,7 +67,7 @@ class GitPromised
   # Public: Checkout a oid.
   #
   # oid     - The oid to checkout as {String} or {Treeish}.
-  # options - The options as {Object}.
+  # options - The options as plain {Object}.
   #
   # Returns: Promise.
   checkout: (oid='HEAD', options={}) ->
@@ -77,8 +75,8 @@ class GitPromised
 
   # Public: Checkout file.
   #
-  # file - The {String} with the file to checkout.
-  #        Defaults to checking out all files with changes!
+  # file - The file(s) to add to the index as {String}, {File} or {Array} of
+  #        the former.
   #
   # Returns:  Promise.
   checkoutFile: (file) ->
@@ -89,11 +87,10 @@ class GitPromised
   #
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
-  #           :treeish - If you need to specifiy a git oid range do it here.
-  #                      Example: `HEAD..HEAD~5`.
+  #           :treeish - Set a treeish range, for example `HEAD..HEAD~5`.
   # args    - The args to pass as {String} or {Array}.
   #
-  # Returns: Promise that resolves to the stdout/stderr.
+  # Returns a Promise that resolves to the git cli output.
   cmd: (command, options, args) ->
     if _.isArray(options) or _.isString(options)
       [options, args] = [null, options]
@@ -130,7 +127,7 @@ class GitPromised
   # file    - The {String} (or multiple in an {Array}) with the path of the file
   #           to diff.
   #           If you pass no file path(s), it will diff all modified files.
-  # options - The {Object} with options git-diff.
+  # options - The {Object} with options for git-diff.
   #           :cached - {Boolean} Show the diff from index.
   #
   # Returns: Promise resolving to {Diff} if you passed a single path or to an
@@ -160,9 +157,9 @@ class GitPromised
 
   # Public: Retrieve the maxCount newest tags.
   #
-  # maxCount - The {Number} of tags to return. (Default: 15)
+  # maxCount - The maximum amount of tags to return as {Number}.
   #
-  # Returns: Promise that resolves to an {Array} of {Tag}s.
+  # Returns a Promise that resolves to an {Array} of {Tag}s.
   getTags: (maxCount=15) ->
     options =
       format: '%(objectname) %(refname)'
@@ -175,21 +172,20 @@ class GitPromised
         tags = raw.split('\n')[...-1]
         Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
 
-  # Public: Initialize the git repo.
+  # Public: Initialize the git repository.
   init: ->
     @cmd 'init'
 
   # Public: Get an array of commits from the current repo.
   #
-  # oid     - The {String} Treeish.
-  # limit   - The {Number} amount of commits to show.
+  # oid   - The {String} Treeish.
+  # limit - The maximum amount of commits to show as {Number}.
   #
   # Returns:  Promise resolving to an {Array} of {Commit}s.
-  log: (oid='HEAD', limit=15, skip=0) ->
+  log: (oid='HEAD', limit=15) ->
     [oid, limit] = ['HEAD', oid] if _.isNumber(oid)
     options =
       'header': true
-      'skip': skip
       'max-count': limit
 
     @cmd 'rev-list', options, oid
@@ -208,7 +204,7 @@ class GitPromised
 
   # Public: Reset repo to oid.
   #
-  # oid     - The {String} to reset to. (Default: 'HEAD')
+  # oid     - The oid to reset to as {String}.
   # options - The {Object} with flags for git CLI.
   #           :soft  - {Boolean)
   #           :mixed - {Boolean) [Default]
@@ -265,7 +261,7 @@ class GitPromised
 
   # Public: Get the repo status.
   #
-  # Returns: Promise resolving to {Status}
+  # Returns a Promise resolving to an instance of {Status}.
   status: ->
     options =
       z: true
