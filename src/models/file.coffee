@@ -83,9 +83,9 @@ class File
   # file - The file as {String}.
   #
   # Returns: Promise that resolves to a {String} with the content.
-  show: (treeish='HEAD') ->
-    treeish = treeish.ref if _.isString(treeish.ref)
-    return @repo.show(treeish, @filePath) if _.isString(treeish)
+  show: (oid='HEAD') ->
+    oid = oid.ref if _.isString(oid.ref)
+    return @repo.show(oid, @filePath) if _.isString(oid)
     Promise.reject(new Error('Invalid ref.'))
 
 module.exports = File

@@ -5,7 +5,7 @@
 Commit  = require './commit'
 Treeish = require './treeish'
 
-# Public: A tag is a special git treeish.
+# Public: A tag is a special git oid.
 class Tag extends Treeish
   # Public: Constructs a new Tag instance.
   #

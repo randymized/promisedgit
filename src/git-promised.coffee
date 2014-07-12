@@ -66,14 +66,14 @@ class GitPromised
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
 
-  # Public: Checkout a treeish.
+  # Public: Checkout a oid.
   #
-  # treeish - The treeish to checkout as {String} or {Treeish}.
+  # oid     - The oid to checkout as {String} or {Treeish}.
   # options - The options as {Object}.
   #
   # Returns: Promise.
-  checkout: (treeish='HEAD', options={}) ->
-    @cmd 'checkout', options, treeish
+  checkout: (oid='HEAD', options={}) ->
+    @cmd 'checkout', options, oid
 
   # Public: Checkout file.
   #
@@ -89,7 +89,7 @@ class GitPromised
   #
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
-  #           :treeish - If you need to specifiy a git treeish range do it here.
+  #           :treeish - If you need to specifiy a git oid range do it here.
   #                      Example: `HEAD..HEAD~5`.
   # args    - The args to pass as {String} or {Array}.
   #
@@ -181,18 +181,18 @@ class GitPromised
 
   # Public: Get an array of commits from the current repo.
   #
-  # treeish - The {String} Treeish.
+  # oid     - The {String} Treeish.
   # limit   - The {Number} amount of commits to show.
   #
   # Returns:  Promise resolving to an {Array} of {Commit}s.
-  log: (treeish='HEAD', limit=15, skip=0) ->
-    [treeish, limit] = ['HEAD', treeish] if _.isNumber(treeish)
+  log: (oid='HEAD', limit=15, skip=0) ->
+    [oid, limit] = ['HEAD', oid] if _.isNumber(oid)
     options =
       'header': true
       'skip': skip
       'max-count': limit
 
-    @cmd 'rev-list', options, treeish
+    @cmd 'rev-list', options, oid
       .then (commitsRaw) =>
         commitsRaw = commitsRaw.split('\0')?[...-1] or []
         new Commit(raw, this) for raw in commitsRaw
@@ -206,9 +206,9 @@ class GitPromised
 
     @cmd 'add', options, '.'
 
-  # Public: Reset repo to treeish.
+  # Public: Reset repo to oid.
   #
-  # treeish - The {String} to reset to. (Default: 'HEAD')
+  # oid     - The {String} to reset to. (Default: 'HEAD')
   # options - The {Object} with flags for git CLI.
   #           :soft  - {Boolean)
   #           :mixed - {Boolean) [Default]
@@ -217,40 +217,51 @@ class GitPromised
   #           :keep  - {Boolean)
   #
   # Returns: Promise.
-  reset: (treeish='HEAD', options={}) ->
-    treeish = treeish.ref if treeish instanceof Treeish
-    [treeish, options] = ['HEAD', treeish] if _.isPlainObject(treeish)
+  reset: (oid='HEAD', options={}) ->
+    oid = oid.ref if oid instanceof Treeish
+    [oid, options] = ['HEAD', oid] if _.isPlainObject(oid)
 
-    @cmd 'reset', options, treeish
+    @cmd 'reset', options, oid
+
+  # Public: git-rev-parse oid.
+  #
+  # oid - The oid to rev-parse as {String} or {Treeish}.
+  #
+  # Returns a Promise that resolves to the rev-parsed oid.
+  revParse: (oid='HEAD', options={}) ->
+    oid = oid.ref if oid instanceof Treeish
+    throw new Error('Invalid oid') unless _.isString(oid)
+
+    @cmd 'rev-parse', options, oid
 
   # Public: Wrapper for git-show.
-  #         If you pass treeish and file you get the file at treeish.
-  #         If you only pass treeish you get the head of treeish.
+  #         If you pass oid and file you get the file at oid.
+  #         If you only pass oid you get the head of oid.
   #         If you only pass file you get the changes made by HEAD to file.
   #
-  # treeish - The {String} or {Treeish} to show.
+  # oid     - The {String} or {Treeish} to show.
   # file    - The {String} or {File} to show.
   # options - The options as plain {Object}.
   #
   # Returns: Promise.
-  show: (treeish, file, options) ->
-    [treeish, file] = [file, treeish] if file instanceof Treeish
-    [treeish, file] = [file, treeish] if treeish instanceof File
+  show: (oid, file, options) ->
+    [oid, file] = [file, oid] if file instanceof Treeish
+    [oid, file] = [file, oid] if oid instanceof File
 
     [options, file]    = [file, null]    if _.isPlainObject(file)
-    [options, treeish] = [treeish, null] if _.isPlainObject(treeish)
+    [options, oid] = [oid, null] if _.isPlainObject(oid)
 
-    if not file? and _.isString(treeish)
-      isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, treeish))
-      [treeish, file] = [file, treeish] if isTreeishAnExistingPath
+    if not file? and _.isString(oid)
+      isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, oid))
+      [oid, file] = [file, oid] if isTreeishAnExistingPath
 
-    treeish = treeish.ref if treeish instanceof Treeish
-    treeish = '' unless _.isString(treeish)
+    oid = oid.ref if oid instanceof Treeish
+    oid = '' unless _.isString(oid)
     file = file.filePath if file instanceof File
     file = '' unless _.isString(file)
-    file = ":#{file}" unless file.length is 0 or treeish.length is 0
+    file = ":#{file}" unless file.length is 0 or oid.length is 0
 
-    @cmd 'show', options, "#{treeish}#{file}"
+    @cmd 'show', options, "#{oid}#{file}"
 
   # Public: Get the repo status.
   #
@@ -270,7 +281,7 @@ class GitPromised
   #
   # Returns: Promise.
   unstage: (file) ->
-    return Promise.reject('No file given') unless file?
+    return Promise.reject(new Error('No file given')) unless file?
     file = [file] unless _.isArray(file)
     file.unshift 'HEAD', '--'
 

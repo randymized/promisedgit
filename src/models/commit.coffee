@@ -2,6 +2,8 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
+_ = require 'lodash'
+
 Actor   = require './actor'
 Diff    = require './diff'
 Treeish = require './treeish'
@@ -13,7 +15,7 @@ class Commit extends Treeish
   # raw  - The raw commit data as {String}.
   # repo - The repository as {GitPromised}.
   constructor: (@raw, @repo) ->
-    throw new Error('No raw data!') unless (typeof(@raw) is 'string')
+    throw new Error('No raw data') unless _.isString(@raw)
     @parseRaw()
 
   # Internal: Parse the @raw data.

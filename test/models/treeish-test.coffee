@@ -11,12 +11,12 @@ describe 'Treeish', ->
     git
     file
     fileString
-    treeish
-    treeishOid
-    treeishFirst
-    treeishString
-    treeishOidString
-    treeishFirstString
+    oid
+    oidOid
+    oidFirst
+    oidString
+    oidOidString
+    oidFirstString
   ] = []
 
   beforeEach ->
@@ -25,13 +25,13 @@ describe 'Treeish', ->
     file = new File('test.coffee', git)
     fileString = 'test.coffee'
 
-    treeishString = 'HEAD~1'
-    treeishOidString = 'e9e3ad6a71996fb83440df2ac36912e2ddb555e0'
-    treeishFirstString = '64e14332ba7a7a02a6f868f425b16d9658cce0b5'
+    oidString = 'HEAD~1'
+    oidOidString = 'e9e3ad6a71996fb83440df2ac36912e2ddb555e0'
+    oidFirstString = '64e14332ba7a7a02a6f868f425b16d9658cce0b5'
 
-    treeish = new Treeish(treeishString, git)
-    treeishOid = new Treeish(treeishOidString, git)
-    treeishFirst = new Treeish(treeishFirstString, git)
+    oid = new Treeish(oidString, git)
+    oidOid = new Treeish(oidOidString, git)
+    oidFirst = new Treeish(oidFirstString, git)
 
   describe '::constructor()', ->
 
@@ -47,14 +47,14 @@ describe 'Treeish', ->
       it 'does not throw', ->
         (-> new Treeish 'HEAD', git).should.not.throw(Error)
 
-  describe 'when the treeish points to any object except the very first', ->
+  describe 'when the oid points to any object except the very first', ->
 
     describe 'when we are using a symbolic reference (HEAD~1)', ->
 
       describe '#checkout()', ->
         it 'checks out that ref', ->
-          treeish.checkout(f: true).then ->
-            git.cmd('rev-parse HEAD').should.eventually.contain treeishOidString
+          oid.checkout(f: true).then ->
+            git.cmd('rev-parse HEAD').should.eventually.contain oidOidString
 
       describe '#diff()', ->
         it 'returns the Diff the ref introduced', ->
@@ -68,7 +68,7 @@ describe 'Treeish', ->
             +c
           '''
 
-          treeish.diff().then ({raw, chunks}) ->
+          oid.diff().then ({raw, chunks}) ->
             raw.should.contain diffRaw
             chunks.length.should.equal 1
 
@@ -83,24 +83,24 @@ describe 'Treeish', ->
           -ab
           -c
         '''
-        describe 'when we pass a valid treeish to compare against', ->
+        describe 'when we pass a valid oid to compare against', ->
 
-          describe 'when we pass a treeish as String', ->
+          describe 'when we pass a oid as String', ->
             it 'returns the diff to it', ->
-              treeish.diffTo(treeishFirstString).then (diff) ->
+              oid.diffTo(oidFirstString).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-          describe 'when we pass a treeish as Treeish object', ->
+          describe 'when we pass a oid as Treeish object', ->
             it 'returns the diff to it', ->
-              treeish.diffTo(treeishFirst).then (diff) ->
+              oid.diffTo(oidFirst).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-        describe 'when the treeish we pass is not valid', ->
+        describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            treeish.diffTo({}).should.be.rejected
-            treeish.diffTo('INVALID').should.be.rejected
+            oid.diffTo({}).should.be.rejected
+            oid.diffTo('INVALID').should.be.rejected
 
       describe '#diffFrom()', ->
 
@@ -113,24 +113,24 @@ describe 'Treeish', ->
           +ab
           +c
         '''
-        describe 'when we pass a valid treeish to compare against', ->
+        describe 'when we pass a valid oid to compare against', ->
 
-          describe 'when we pass a treeish as String', ->
+          describe 'when we pass a oid as String', ->
             it 'returns the diff from it', ->
-              treeish.diffFrom(treeishFirstString).then (diff) ->
+              oid.diffFrom(oidFirstString).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-          describe 'when we pass a treeish as Treeish object', ->
+          describe 'when we pass a oid as Treeish object', ->
             it 'returns the diff from it', ->
-              treeish.diffFrom(treeishFirst).then (diff) ->
+              oid.diffFrom(oidFirst).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-        describe 'when the treeish we pass is not valid', ->
+        describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            treeish.diffFrom({}).should.be.rejected
-            treeish.diffFrom('INVALID').should.be.rejected
+            oid.diffFrom({}).should.be.rejected
+            oid.diffFrom('INVALID').should.be.rejected
 
       describe '#showFile()', ->
 
@@ -141,31 +141,31 @@ describe 'Treeish', ->
 
         describe 'when we pass a valid file as String', ->
           it 'returns the contents of that file at this commit', ->
-            treeish.showFile(fileString).then (content) ->
+            oid.showFile(fileString).then (content) ->
               content.should.contain fileContentAtTreeish
 
         describe 'when we pass a valid file as File instance', ->
           it 'returns the contents of that file at this commit', ->
-            treeish.showFile(file).then (content) ->
+            oid.showFile(file).then (content) ->
               content.should.contain fileContentAtTreeish
 
         describe 'when we pass an invalid file', ->
           it 'rejects the promise', ->
-            treeish.showFile().should.be.rejected
-            treeish.showFile({}).should.be.rejected
-            treeish.showFile('WhyYouNoExist').should.be.rejected
+            oid.showFile().should.be.rejected
+            oid.showFile({}).should.be.rejected
+            oid.showFile('WhyYouNoExist').should.be.rejected
 
       describe '#reset()', ->
-        it 'resets the HEAD to this treeish', ->
-          treeish.reset().then ->
-            git.cmd('rev-parse HEAD').should.eventually.contain treeishOidString
+        it 'resets the HEAD to this oid', ->
+          oid.reset().then ->
+            git.cmd('rev-parse HEAD').should.eventually.contain oidOidString
 
     describe 'when we are using the unique hash', ->
 
       describe '#checkout()', ->
         it 'checks out that ref', ->
-          treeishOid.checkout(f: true).then ->
-            git.cmd('rev-parse HEAD').should.eventually.contain treeishOidString
+          oidOid.checkout(f: true).then ->
+            git.cmd('rev-parse HEAD').should.eventually.contain oidOidString
 
       describe '#diff()', ->
         it 'returns the Diff the ref introduced', ->
@@ -179,7 +179,7 @@ describe 'Treeish', ->
             +c
           '''
 
-          treeishOid.diff().then ({raw, chunks}) ->
+          oidOid.diff().then ({raw, chunks}) ->
             raw.should.contain diffRaw
             chunks.length.should.equal 1
 
@@ -194,24 +194,24 @@ describe 'Treeish', ->
           -ab
           -c
         '''
-        describe 'when we pass a valid treeish to compare against', ->
+        describe 'when we pass a valid oid to compare against', ->
 
-          describe 'when we pass a treeish as String', ->
+          describe 'when we pass a oid as String', ->
             it 'returns the diff to it', ->
-              treeishOid.diffTo(treeishFirstString).then (diff) ->
+              oidOid.diffTo(oidFirstString).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-          describe 'when we pass a treeish as Treeish object', ->
+          describe 'when we pass a oid as Treeish object', ->
             it 'returns the diff to it', ->
-              treeishOid.diffTo(treeishFirst).then (diff) ->
+              oidOid.diffTo(oidFirst).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-        describe 'when the treeish we pass is not valid', ->
+        describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            treeishOid.diffTo({}).should.be.rejected
-            treeishOid.diffTo('INVALID').should.be.rejected
+            oidOid.diffTo({}).should.be.rejected
+            oidOid.diffTo('INVALID').should.be.rejected
 
       describe '#diffFrom()', ->
 
@@ -224,24 +224,24 @@ describe 'Treeish', ->
           +ab
           +c
         '''
-        describe 'when we pass a valid treeish to compare against', ->
+        describe 'when we pass a valid oid to compare against', ->
 
-          describe 'when we pass a treeish as String', ->
+          describe 'when we pass a oid as String', ->
             it 'returns the diff from it', ->
-              treeishOid.diffFrom(treeishFirstString).then (diff) ->
+              oidOid.diffFrom(oidFirstString).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-          describe 'when we pass a treeish as Treeish object', ->
+          describe 'when we pass a oid as Treeish object', ->
             it 'returns the diff from it', ->
-              treeishOid.diffFrom(treeishFirst).then (diff) ->
+              oidOid.diffFrom(oidFirst).then (diff) ->
                 diff.raw.should.contain diffRaw
                 diff.chunks.length.should.equal 1
 
-        describe 'when the treeish we pass is not valid', ->
+        describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            treeishOid.diffFrom({}).should.be.rejected
-            treeishOid.diffFrom('INVALID').should.be.rejected
+            oidOid.diffFrom({}).should.be.rejected
+            oidOid.diffFrom('INVALID').should.be.rejected
 
       describe '#showFile()', ->
 
@@ -252,31 +252,31 @@ describe 'Treeish', ->
 
         describe 'when we pass a valid file as String', ->
           it 'returns the contents of that file at this commit', ->
-            treeishOid.showFile(fileString).then (content) ->
+            oidOid.showFile(fileString).then (content) ->
               content.should.contain fileContentAtTreeish
 
         describe 'when we pass a valid file as File instance', ->
           it 'returns the contents of that file at this commit', ->
-            treeishOid.showFile(file).then (content) ->
+            oidOid.showFile(file).then (content) ->
               content.should.contain fileContentAtTreeish
 
         describe 'when we pass an invalid file', ->
           it 'rejects the promise', ->
-            treeishOid.showFile().should.be.rejected
-            treeishOid.showFile({}).should.be.rejected
-            treeishOid.showFile('WhyYouNoExist').should.be.rejected
+            oidOid.showFile().should.be.rejected
+            oidOid.showFile({}).should.be.rejected
+            oidOid.showFile('WhyYouNoExist').should.be.rejected
 
       describe '#reset()', ->
-        it 'resets the HEAD to this treeish', ->
-          treeishOid.reset().then ->
-            git.cmd('rev-parse HEAD').should.eventually.contain treeishOidString
+        it 'resets the HEAD to this oid', ->
+          oidOid.reset().then ->
+            git.cmd('rev-parse HEAD').should.eventually.contain oidOidString
 
-  describe 'when the treeish points to the very first object in repo history', ->
+  describe 'when the oid points to the very first object in repo history', ->
 
     describe '#checkout()', ->
       it 'checks out that ref', ->
-        treeishFirst.checkout(f: true).then ->
-          git.cmd('rev-parse HEAD').should.eventually.contain treeishFirstString
+        oidFirst.checkout(f: true).then ->
+          git.cmd('rev-parse HEAD').should.eventually.contain oidFirstString
 
     describe '#diff()', ->
       it 'returns the Diff the ref introduced', ->
@@ -286,7 +286,7 @@ describe 'Treeish', ->
           index 0000000..e69de29
         '''
 
-        treeishFirst.diff().then ({raw, chunks}) ->
+        oidFirst.diff().then ({raw, chunks}) ->
           raw.should.contain diffRaw
           chunks.length.should.equal 0
 
@@ -301,24 +301,24 @@ describe 'Treeish', ->
         +ab
         +c
       '''
-      describe 'when we pass a valid treeish to compare against', ->
+      describe 'when we pass a valid oid to compare against', ->
 
-        describe 'when we pass a treeish as String', ->
+        describe 'when we pass a oid as String', ->
           it 'returns the diff to it', ->
-            treeishFirst.diffTo(treeishOidString).then (diff) ->
+            oidFirst.diffTo(oidOidString).then (diff) ->
               diff.raw.should.contain diffRaw
               diff.chunks.length.should.equal 1
 
-        describe 'when we pass a treeish as Treeish object', ->
+        describe 'when we pass a oid as Treeish object', ->
           it 'returns the diff to it', ->
-            treeishFirst.diffTo(treeishOid).then (diff) ->
+            oidFirst.diffTo(oidOid).then (diff) ->
               diff.raw.should.contain diffRaw
               diff.chunks.length.should.equal 1
 
-      describe 'when the treeish we pass is not valid', ->
+      describe 'when the oid we pass is not valid', ->
         it 'rejects the promise', ->
-          treeishFirst.diffTo({}).should.be.rejected
-          treeishFirst.diffTo('INVALID').should.be.rejected
+          oidFirst.diffTo({}).should.be.rejected
+          oidFirst.diffTo('INVALID').should.be.rejected
 
     describe '#diffFrom()', ->
 
@@ -331,24 +331,24 @@ describe 'Treeish', ->
         -ab
         -c
       '''
-      describe 'when we pass a valid treeish to compare against', ->
+      describe 'when we pass a valid oid to compare against', ->
 
-        describe 'when we pass a treeish as String', ->
+        describe 'when we pass a oid as String', ->
           it 'returns the diff from it', ->
-            treeishFirst.diffFrom(treeishOidString).then (diff) ->
+            oidFirst.diffFrom(oidOidString).then (diff) ->
               diff.raw.should.contain diffRaw
               diff.chunks.length.should.equal 1
 
-        describe 'when we pass a treeish as Treeish object', ->
+        describe 'when we pass a oid as Treeish object', ->
           it 'returns the diff from it', ->
-            treeishFirst.diffFrom(treeishOid).then (diff) ->
+            oidFirst.diffFrom(oidOid).then (diff) ->
               diff.raw.should.contain diffRaw
               diff.chunks.length.should.equal 1
 
-      describe 'when the treeish we pass is not valid', ->
+      describe 'when the oid we pass is not valid', ->
         it 'rejects the promise', ->
-          treeishFirst.diffFrom({}).should.be.rejected
-          treeishFirst.diffFrom('INVALID').should.be.rejected
+          oidFirst.diffFrom({}).should.be.rejected
+          oidFirst.diffFrom('INVALID').should.be.rejected
 
     describe '#showFile()', ->
 
@@ -356,21 +356,21 @@ describe 'Treeish', ->
 
       describe 'when we pass a valid file as String', ->
         it 'returns the contents of that file at this commit', ->
-          treeishFirst.showFile(fileString).then (content) ->
+          oidFirst.showFile(fileString).then (content) ->
             content.should.equal fileContentAtTreeish
 
       describe 'when we pass a valid file as File instance', ->
         it 'returns the contents of that file at this commit', ->
-          treeishFirst.showFile(file).then (content) ->
+          oidFirst.showFile(file).then (content) ->
             content.should.equal fileContentAtTreeish
 
       describe 'when we pass an invalid file', ->
         it 'rejects the promise', ->
-          treeishFirst.showFile().should.be.rejected
-          treeishFirst.showFile({}).should.be.rejected
-          treeishFirst.showFile('WhyYouNoExist').should.be.rejected
+          oidFirst.showFile().should.be.rejected
+          oidFirst.showFile({}).should.be.rejected
+          oidFirst.showFile('WhyYouNoExist').should.be.rejected
 
     describe '#reset()', ->
-      it 'resets the HEAD to this treeish', ->
-        treeishFirst.reset().then ->
-          git.cmd('rev-parse HEAD').should.eventually.contain treeishFirstString
+      it 'resets the HEAD to this oid', ->
+        oidFirst.reset().then ->
+          git.cmd('rev-parse HEAD').should.eventually.contain oidFirstString

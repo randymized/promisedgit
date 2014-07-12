@@ -15,7 +15,7 @@ class GitWrapper
   #
   # command - The command to execute as {String}.
   # options - The options to pass as {Object}.
-  #           :treeish - If you need to specifiy a git treeish range do it here.
+  #           :treeish - If you need to specifiy a git oid range do it here.
   #                      Example: `HEAD..HEAD~5`.
   # args    - The args to pass as {String} or {Array}.
   # cwd     - The current working directory as {String}.
@@ -52,7 +52,7 @@ class GitWrapper
   options_to_argv = (options={}) ->
     argv = []
     for key, val of options
-      # If there is a key named 'treeish' the user specified a git treeish range.
+      # If there is a key named 'oid' the user specified a git oid range.
       if key is 'treeish'
         argv.push val
       else if key.length == 1

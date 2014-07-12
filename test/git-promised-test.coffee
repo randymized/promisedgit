@@ -226,7 +226,7 @@ describe 'Git-Promised', ->
       git = new Git(prepareFixture('testDir'))
       git.init()
 
-    describe 'when we reset without passing a treeish (defaults to HEAD)', ->
+    describe 'when we reset without passing a oid (defaults to HEAD)', ->
       describe 'when we use no or the --mixed flag', ->
         it 'removes the file from index, leaves it in working tree', ->
           git.reset()
@@ -254,7 +254,7 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
 
-    describe 'when we reset to a specific treeish', ->
+    describe 'when we reset to a specific oid', ->
       describe 'when we use no or the --mixed flag', ->
         it 'resets to HEAD~1, changes stay in the working tree', ->
           git.reset('HEAD~1')
@@ -282,7 +282,7 @@ describe 'Git-Promised', ->
             o.unstaged.should.have.length(0)
             o.untracked.should.have.length(1)
 
-    describe 'when we reset to an invalid treeish', ->
+    describe 'when we reset to an invalid oid', ->
       it 'rejects the promise', ->
         git.reset('pusemuckel').should.be.rejected
 
@@ -357,10 +357,10 @@ describe 'Git-Promised', ->
     fileNotExistingString = 'e.coffee'
     fileNotExistingInstance = new File(fileNotExistingString, git)
 
-    treeishString   = 'ac657698c7630e3b65f575912aff76bf581f335f'
-    treeishInstance = new Treeish(treeishString, git)
-    treeishNotExistingString   = 'ac657698c7630e3b66g775912aff76bf581f335f'
-    treeishNotExistingInstance = new Treeish(treeishNotExistingString, git)
+    oidString   = 'ac657698c7630e3b65f575912aff76bf581f335f'
+    oidInstance = new Treeish(oidString, git)
+    oidNotExistingString   = 'ac657698c7630e3b66g775912aff76bf581f335f'
+    oidNotExistingInstance = new Treeish(oidNotExistingString, git)
 
     fileContent = '''
           # Assignment:
@@ -414,77 +414,77 @@ describe 'Git-Promised', ->
        math =\n
     """
 
-    treeishContent = '''
+    oidContent = '''
       commit ac657698c7630e3b65f575912aff76bf581f335f
       Author: Maximilian Schüßler <git@mschuessler.org>
       Date:   Sun Jun 29 19:02:56 2014 +0200
     '''
 
-    describe 'when we pass an treeish and a file', ->
+    describe 'when we pass an oid and a file', ->
 
       describe 'when we pass a Treeish instance and a File instance', ->
         describe 'when both are existing in repo', ->
-          it 'returns the file at treeish', ->
-            git.show(treeishInstance, fileInstance).should.eventually.eql fileContent
+          it 'returns the file at oid', ->
+            git.show(oidInstance, fileInstance).should.eventually.eql fileContent
         describe 'when either of them is not existing in repo', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingInstance, fileInstance)
+            git.show(oidNotExistingInstance, fileInstance)
             .should.eventually.be.rejected
-            git.show(treeishInstance, fileNotExistingInstance)
+            git.show(oidInstance, fileNotExistingInstance)
             .should.eventually.be.rejected
 
 
       describe 'when we pass a Treeish instance and a file string', ->
         describe 'when both are existing in repo', ->
-          it 'returns the file at treeish', ->
-            git.show(treeishInstance, fileString).should.eventually.eql fileContent
+          it 'returns the file at oid', ->
+            git.show(oidInstance, fileString).should.eventually.eql fileContent
         describe 'when either of them is not existing in repo', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingInstance, fileString)
+            git.show(oidNotExistingInstance, fileString)
             .should.eventually.be.rejected
-            git.show(treeishInstance, fileNotExistingString)
+            git.show(oidInstance, fileNotExistingString)
             .should.eventually.be.rejected
 
 
-      describe 'when we pass a treeish string and a File instance', ->
+      describe 'when we pass a oid string and a File instance', ->
         describe 'when both are existing in repo', ->
-          it 'returns the file at treeish', ->
-            git.show(treeishString, fileInstance).should.eventually.eql fileContent
+          it 'returns the file at oid', ->
+            git.show(oidString, fileInstance).should.eventually.eql fileContent
         describe 'when either of them is not existing in repo', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingString, fileInstance)
+            git.show(oidNotExistingString, fileInstance)
             .should.eventually.be.rejected
-            git.show(treeishString, fileNotExistingInstance)
+            git.show(oidString, fileNotExistingInstance)
             .should.eventually.be.rejected
 
 
-      describe 'when we pass a treeish string and a file string', ->
+      describe 'when we pass a oid string and a file string', ->
         describe 'when both are existing in repo', ->
-          it 'returns the file at treeish', ->
-            git.show(treeishString, fileString).should.eventually.eql fileContent
+          it 'returns the file at oid', ->
+            git.show(oidString, fileString).should.eventually.eql fileContent
         describe 'when either of them is not existing in repo', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingString, fileString)
+            git.show(oidNotExistingString, fileString)
             .should.eventually.be.rejected
-            git.show(treeishString, fileNotExistingString)
+            git.show(oidString, fileNotExistingString)
             .should.eventually.be.rejected
 
-    describe 'when we only pass a treeish', ->
+    describe 'when we only pass a oid', ->
       describe 'when we pass a Treeish instance', ->
         describe 'when it is existing', ->
-          it 'returns the treeish itself', ->
-            git.show(treeishInstance).should.eventually.contain treeishContent
+          it 'returns the oid itself', ->
+            git.show(oidInstance).should.eventually.contain oidContent
         describe 'when it is not existing', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingInstance).should.eventually.be.rejected
+            git.show(oidNotExistingInstance).should.eventually.be.rejected
 
-      describe 'when we pass a treeish string', ->
+      describe 'when we pass a oid string', ->
         describe 'when it is existing', ->
-          it 'returns the treeish itself', ->
-            git.show(treeishString).should.eventually.contain treeishContent
+          it 'returns the oid itself', ->
+            git.show(oidString).should.eventually.contain oidContent
         describe 'when it is not existing', ->
           it 'rejects the promise', ->
-            git.show(treeishNotExistingString).should.eventually.be.rejected
+            git.show(oidNotExistingString).should.eventually.be.rejected
 
     describe 'when we only pass a file', ->
       describe 'when we pass a File instance', ->
@@ -503,7 +503,7 @@ describe 'Git-Promised', ->
           it 'rejects the promise', ->
             git.show(fileNotExistingString).should.eventually.be.rejected
 
-    describe 'when we pass neither a file nor a treeish', ->
+    describe 'when we pass neither a file nor a oid', ->
       it 'returns the head of the current branch', ->
         git.show().should.eventually.eql currentHead
 

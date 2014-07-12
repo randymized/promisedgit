@@ -9,7 +9,7 @@ Diff = require './diff'
 File = require './file'
 
 # Public: This class is the base class to allow easy access to relevant actions
-# upon any kind of treeish object in git.
+# upon any kind of oid object in git.
 class Treeish
 
   # Private: Git empty tree hash.
@@ -27,11 +27,15 @@ class Treeish
 
   # Public: Checkout the {Treeish} in git.
   #
+  # options - The options as plain {Object}.
+  #
   # Returns: Promise.
   checkout: (options={}) ->
     @repo.checkout(@ref, options)
 
   # Public: Get the {Diff} this {Treeish} introduced.
+  #
+  # options - The options as plain {Object}.
   #
   # Returns: Promise that resolves to a {Diff}.
   diff: (options={}) ->
@@ -41,25 +45,27 @@ class Treeish
 
   # Public: Get the diff to another {Treeish}.
   #
-  # treeish - The treeish to diff against as {String} or {Treeish}.
+  # oid     - The oid to diff against as {String} or {Treeish}.
+  # options - The options as plain {Object}.
   #
   # Returns: Promise that resolves to a {Diff}.
-  diffTo: (treeish='HEAD') ->
-    treeish = treeish.ref if treeish instanceof Treeish
-    options = {treeish: "#{@ref}..#{treeish}"}
-    return @repo.getDiff(options) if _.isString(treeish)
-    return Promise.reject(new Error('Invalid treeish.'))
+  diffTo: (oid='HEAD', options={}) ->
+    oid = oid.ref if oid instanceof Treeish
+    options = _.extend options, {treeish: "#{@ref}..#{oid}"}
+    return @repo.getDiff(options) if _.isString(oid)
+    return Promise.reject(new Error('Invalid oid'))
 
   # Public: Get the diff from another {Treeish}.
   #
-  # treeish - The treeish to diff against as {String} or {Treeish}.
+  # oid     - The oid to diff against as {String} or {Treeish}.
+  # options - The options as plain {Object}.
   #
   # Returns: Promise that resolves to a {Diff}.
-  diffFrom: (treeish='HEAD') ->
-    treeish = treeish.ref if treeish instanceof Treeish
-    options = {treeish: "#{treeish}..#{@ref}"}
-    return @repo.getDiff(options) if _.isString(treeish)
-    return Promise.reject(new Error('Invalid treeish.'))
+  diffFrom: (oid='HEAD', options={}) ->
+    oid = oid.ref if oid instanceof Treeish
+    options = _.extend options,{treeish: "#{oid}..#{@ref}"}
+    return @repo.getDiff(options) if _.isString(oid)
+    return Promise.reject(new Error('Invalid oid'))
 
   # Public: Get the content of a file at this {Treeish}.
   #
@@ -69,7 +75,7 @@ class Treeish
   showFile: (file) ->
     return file.show(@ref) if file instanceof File
     return @repo.show(@ref, file) if _.isString(file)
-    return Promise.reject(new Error('Invalid file.'))
+    return Promise.reject(new Error('Invalid file'))
 
   # Public: Reset the current branch to this {Treeish}.
   #
