@@ -239,7 +239,7 @@ class GitPromised
   # Returns a Promise that resolves to the rev-parsed oid.
   revParse: (oid='HEAD', options={}) ->
     oid = oid.ref if oid instanceof Treeish
-    throw new Error('Invalid oid') unless _.isString(oid)
+    return Promise.reject(new Error('Invalid oid')) unless _.isString(oid)
 
     @cmd 'rev-parse', options, oid
 
