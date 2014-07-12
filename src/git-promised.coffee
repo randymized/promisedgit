@@ -52,10 +52,13 @@ class GitPromised
   #
   # Returns: Promise.
   add: (file) ->
-    file ?= '.'
-    options =
-      A: true
-    @cmd 'add', options, file
+    if _.isArray(file)
+      file = _.map file, (val) ->
+        if val instanceof File then val.path else val
+    else if not _.isString(file)
+      file = '.'
+
+    @cmd 'add', {A: true}, file
 
   # Public: Amend HEAD.
   #
