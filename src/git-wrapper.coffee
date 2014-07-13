@@ -8,7 +8,7 @@ Promise = require 'bluebird'
 {exec}  = require 'child_process'
 
 # Internal: GitWrapper parses our commands to and the output from the CLI. You
-#           can access it through the {GitPromised::cmd} method.
+#           can access it through the {PromisedGit::cmd} method.
 class GitWrapper
 
   # Public: Git CLI wrapper.
