@@ -1,6 +1,6 @@
---name       "git-promised"
+--name       "promised-git"
 --readme     README.md
---title      "git-promised Documentation"
+--title      "promised-git API"
 --private
 --internal
 --quiet
