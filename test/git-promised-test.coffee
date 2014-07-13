@@ -5,7 +5,7 @@
 temp = require 'temp'
 path = require 'path'
 
-Git = require '../src/git-promised'
+Git = require '../src/promised-git'
 prepareFixture = require './helper'
 {Commit, Diff, File, Status, Treeish} = require '../src/models'
 

@@ -1,9 +1,9 @@
 {
-  "name": "git-promised",
+  "name": "promised-git",
   "version": "0.0.1",
   "description": "Work with git using promises",
   "author": "Maximilian Schüßler <git@mschuessler.org>",
-  "main": "lib/git-promised.js",
+  "main": "lib/promised-git.js",
   "scripts": {
     "test": "cake test",
     "prepublish": "cake build"
@@ -11,14 +11,14 @@
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/maschs/git-promised.git"
+    "url": "https://github.com/promisedgit/promisedgit.git"
   },
   "bugs": {
-    "url": "https://github.com/maschs/git-promised/issues"
+    "url": "https://github.com/promisedgit/promisedgit/issues"
   },
-  "homepage": "https://github.com/maschs/git-promised",
+  "homepage": "https://github.com/promisedgit/promisedgit",
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 0.10.0"
   },
   "dependencies": {
     "bluebird": "~2.2.1",
@@ -37,6 +37,8 @@
   "keywords": [
     "git",
     "promise",
+    "promised",
+    "bluebird",
     "async"
   ]
 }

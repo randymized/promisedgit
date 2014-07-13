@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_  = require 'lodash'
+_  = require '../lodash'
 fs = require 'fs'
 
 Treeish = require './treeish'
@@ -12,11 +12,13 @@ class File
   # Public: Constructs a new instance of {File}.
   #
   # path - The file path as {String}.
-  # repo - The repository as {GitPromised}.
+  # repo - The repository as {PromisedGit}.
   # mode - The porcelain status as {String}.
   constructor: (@path, @repo, @mode='  ') ->
-    throw new Error('Invalid git repo.') unless @repo?.isGitRepo
-    throw new Error('Invalid file path.') unless _.isString(@path)
+    if not _.instanceOf(@repo, 'PromisedGit')
+      throw new Error('Invalid git repository object')
+    if not _.isString(@path) and fs.existsSync(@path)
+      throw new Error('Invalid file path')
     @parseMode()
 
   # Public: Update the porcelain status.

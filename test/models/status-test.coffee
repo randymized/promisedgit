@@ -1,4 +1,4 @@
-Git = require '../../src/git-promised'
+Git = require '../../src/promised-git'
 prepareFixture = require '../helper'
 {Status, Commit, Treeish, File} = require '../../src/models'
 

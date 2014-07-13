@@ -15,10 +15,12 @@ class Amend
   # Public: Constructor
   #
   # message - The original commit message as {String}.
-  # repo    - The repository as {GitPromised}.
+  # repo    - The repository as {PromisedGit}.
   constructor: (@origMessage='', @repo) ->
-    [@origMessage, @repo] = ['', @origMessage] if @origMessage?.isGitRepo
-    throw new Error('No valid git repo!') unless @repo?.isGitRepo
+    if _.instanceOf(@origMessage, 'PromisedGit')
+      [@origMessage, @repo] = ['', @origMessage]
+    if not _.instanceOf(@repo, 'PromisedGit')
+      throw new Error('Invalid git repository object')
 
     @origMessage = "#{@origMessage?.trim()}\n"
     @repo.reset 'HEAD^', soft: true

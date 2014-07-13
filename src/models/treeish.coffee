@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_       = require 'lodash'
+_       = require '../lodash'
 Promise = require 'bluebird'
 
 Diff = require './diff'
@@ -18,12 +18,13 @@ class Treeish
   # Public: Constructs a new instance of {Treeish}.
   #
   # ref  - The object ref as {String}.
-  # repo - The repository as {GitPromised}.
+  # repo - The repository as {PromisedGit}.
   #
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->
     throw new Error('Invalid ref') unless _.isString(@ref)
-    throw new Error('Invalid repository instance') unless @repo?.isGitRepo
+    if not _.instanceOf(@repo, 'PromisedGit')
+      throw new Error('Invalid repository instance')
 
   # Public: Checkout the {Treeish} in git.
   #

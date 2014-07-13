@@ -10,7 +10,7 @@ class Tag extends Treeish
   # Public: Constructs a new Tag instance.
   #
   # raw  - The raw data as {String}.
-  # repo - The repository as {GitPromised}.
+  # repo - The repository as {PromisedGit}.
   constructor: (raw, repo) ->
     [hash, ref] = @parseRaw(raw)
     super(ref, repo)

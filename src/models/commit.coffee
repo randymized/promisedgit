@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_ = require 'lodash'
+_ = require '../lodash'
 
 Actor   = require './actor'
 Diff    = require './diff'
@@ -13,14 +13,15 @@ class Commit extends Treeish
   # Public: Constructs a new instance of {Commit}.
   #
   # raw  - The raw commit data as {String}.
-  # repo - The repository as {GitPromised}.
+  # repo - The repository as {PromisedGit}.
   constructor: (@raw, @repo) ->
     throw new Error('No raw data') unless _.isString(@raw)
+    super(@parseRef(@raw), @repo)
     @parseRaw()
 
   # Internal: Parse the @raw data.
   parseRaw: ->
-    @ref = @parseRef(@raw)
+    @ref ?= @parseRef(@raw)
     @tree = @parseTree(@raw)
     [@author, @authoredDate] = @actor @parseAuthor(@raw)
     [@committer, @committedDate] = @actor @parseCommitter(@raw)
@@ -82,7 +83,7 @@ class Commit extends Treeish
   # Returns the gpgsig as {String}.
   parseGpgSig: (raw) ->
     regex = /^[^\-|VERSION|\n](.*)+$/gm
-    raw.match(regex)?[1].join?('\n')
+    raw.match(regex)?[1]?.join?('\n')
 
   # Internal: Parses raw and returns the commit message.
   #

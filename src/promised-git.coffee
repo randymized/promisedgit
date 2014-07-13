@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_       = require 'lodash'
+_       = require './lodash'
 fs      = require 'fs'
 path    = require 'path'
 Promise = require 'bluebird'
@@ -16,7 +16,7 @@ git = require './git-wrapper'
 #
 # ##Example
 # ```coffee
-# Git = require 'git-promised'
+# Git = require 'promised-git'
 # git = new Git('/tmp/exampleRepo')
 #
 # # Add all unstaged files to the index.
@@ -37,8 +37,8 @@ git = require './git-wrapper'
 #       #  d.coffee | 4 ++++
 #       #  3 files changed, 6 insertions(+), 2 deletions(-)
 # ```
-class GitPromised
-  # Public: Construct a new {GitPromised} instance.
+class PromisedGit
+  # Public: Construct a new {PromisedGit} instance.
   #
   # cwd - The path of the git repository as {String}.
   constructor: (@cwd) ->
@@ -297,4 +297,4 @@ class GitPromised
 
     @cmd 'reset', {treeish: 'HEAD'}, file
 
-module.exports = GitPromised
+module.exports = PromisedGit

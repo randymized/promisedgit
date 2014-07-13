@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-Git = require '../../src/git-promised'
+Git = require '../../src/promised-git'
 prepareFixture = require '../helper'
 {Commit} = require '../../src/models'
 

@@ -2,6 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
+_ = require '../lodash'
 File = require './file'
 
 # Public: Represents the git status for the whole repository.
@@ -9,9 +10,10 @@ class Status
   # Public: Constructs a new instance of {Status}.
   #
   # raw  - The raw porcelain status as {String}.
-  # repo - The repository as {GitPromised}.
+  # repo - The repository as {PromisedGit}.
   constructor: (raw, @repo) ->
-    throw new Error('Invalid repository') unless @repo?.isGitRepo
+    if not _.instanceOf(@repo, 'PromisedGit')
+      throw new Error('Invalid git repository object')
     @parseRaw(raw)
 
   # Internal: Parses the raw data.
@@ -43,7 +45,7 @@ class Status
   # Private: Parses the raw data and returns an array of {File}s.
   #
   # lines - The lines as {Array}.
-  # repo  - The repository as {GitPromised}.
+  # repo  - The repository as {PromisedGit}.
   #
   # Returns an {Array} with the indices
   #   :0 - The staged files as {Array}.
