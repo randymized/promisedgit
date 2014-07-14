@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-temp = require 'temp'
+temp = require('temp').track()
 path = require 'path'
 
 Git = require '../src/promised-git'

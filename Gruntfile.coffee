@@ -8,7 +8,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
 
   grunt.initConfig
-    coffee:
+    'coffee':
       compile:
         expand: true
         cwd: "#{__dirname}/src/"
@@ -16,7 +16,7 @@ module.exports = (grunt) ->
         dest: 'lib/'
         ext: '.js'
 
-    coffeelint:
+    'coffeelint':
       app: ['src/**/*.coffee']
       options:
         arrow_spacing:
@@ -46,14 +46,14 @@ module.exports = (grunt) ->
         no_unnecessary_double_quotes:
           level: 'warn'
 
-    mochaTest:
+    'mochaTest':
       test:
         options:
           reporter: 'spec'
           require: 'coffee-script/register'
         src: ['test/*.coffee', 'test/models/*.coffee']
 
-    exec:
+    'exec':
       build_docs:
         # I am using a patched version of biscotto to hotfix
         # https://github.com/atom/biscotto/pull/59 for now.
@@ -64,7 +64,7 @@ module.exports = (grunt) ->
         base: 'doc'
       src: ['**']
 
-    release:
+    'release':
       options:
         bump: true
         add: true
