@@ -11,3 +11,4 @@ lib
 # This file is used for developing.
 src/test.coffee
 doc/
+.grunt/

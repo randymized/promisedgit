@@ -7,5 +7,4 @@
 --output-dir ./doc
 ./src
 -
-LICENSE
 CHANGELOG.md
