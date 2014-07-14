@@ -22,8 +22,8 @@ class Treeish
   #
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->
-    throw new Error('Invalid ref') unless _.isString(@ref)
-    throw new Error('Invalid repository object') unless _.isPromisedGit(@repo)
+    throw new Error('Invalid ref') unless _.isString(ref)
+    throw new Error('Invalid repository object') unless _.isPromisedGit(repo)
 
   # Public: Checkout the {Treeish} in git.
   #

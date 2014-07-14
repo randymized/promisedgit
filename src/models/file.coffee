@@ -15,7 +15,7 @@ class File
   # repo - The repository as {PromisedGit}.
   # mode - The porcelain status as {String}.
   constructor: (@path, @repo, @mode='  ') ->
-    if not _.isPromisedGit(@repo)
+    if not _.isPromisedGit(repo)
       throw new Error('Invalid repository object')
     else if not _.isString(@path)
       throw new Error('Invalid file name')

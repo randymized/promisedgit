@@ -42,8 +42,7 @@ class PromisedGit
   #
   # cwd - The path of the git repository as {String}.
   constructor: (@cwd) ->
-    throw new Error("'#{@cwd}' does not exist!") unless fs.existsSync(@cwd)
-    @isGitRepo = true
+    throw new Error("'#{cwd}' does not exist!") unless fs.existsSync(cwd)
 
   # Public: Add file(s) to the index.
   #

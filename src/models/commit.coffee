@@ -15,8 +15,8 @@ class Commit extends Treeish
   # raw  - The raw commit data as {String}.
   # repo - The repository as {PromisedGit}.
   constructor: (@raw, @repo) ->
-    throw new Error('No raw data') unless _.isString(@raw)
-    super(@parseRef(@raw), @repo)
+    throw new Error('No raw data') unless _.isString(raw)
+    super(@parseRef(raw), repo)
     @parseRaw()
 
   # Internal: Parse the @raw data.

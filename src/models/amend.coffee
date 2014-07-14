@@ -2,6 +2,8 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
+_ = require '../lodash'
+
 Actor = require './actor'
 Diff = require './diff'
 Treeish = require './treeish'
@@ -17,9 +19,9 @@ class Amend
   # message - The original commit message as {String}.
   # repo    - The repository as {PromisedGit}.
   constructor: (@origMessage='', @repo) ->
-    if _.isPromisedGit(@origMessage)
-      [@origMessage, @repo] = ['', @origMessage]
-    else if not _.isPromisedGit(@repo)
+    if _.isPromisedGit(origMessage)
+      [@origMessage, @repo] = ['', origMessage]
+    else if not _.isPromisedGit(repo)
       throw new Error('Invalid repository object')
 
     @origMessage = "#{@origMessage?.trim()}\n"
@@ -39,21 +41,14 @@ class Amend
   #           {String}.
   #
   # Returns: Promise.
-  commit: (message=@origMessage) ->
-    @repo.commit(message).then (stdout) =>
-      @destroy()
-      stdout
+  commit: (message) ->
+    message = @origMessage unless _.isString(message)
+    @repo.commit(message).then (stdout) => stdout
 
   # Public: Get the original commit message.
   #
   # Returns the original commit message as {String}.
   getAmendMessage: ->
     @origMessage
-
-  # Public: Destroy amend object.
-  destroy: ->
-    @repo = null
-    @alive = false
-    @destroyed = true
 
 module.exports = Amend
