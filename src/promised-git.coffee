@@ -161,9 +161,9 @@ class PromisedGit
     else
       _.extend options, {'p': true, 'unified': 1, 'no-color': true}
       @cmd 'diff', options, file
-        .then (raw) ->
-          return new Diff(file, raw) if raw?.length > 0
-          throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
+      .then (raw) ->
+        return new Diff(file, raw) if raw?.length > 0
+        throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
 
   # Public: Retrieve the maxCount newest tags.
   #
@@ -177,10 +177,10 @@ class PromisedGit
       count: maxCount
 
     @cmd 'for-each-ref', options, 'refs/tags/'
-      .then (raw) =>
-        return throw new Error('No tags available') unless raw.length > 0
-        tags = raw.split('\n')[...-1]
-        Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
+    .then (raw) =>
+      return throw new Error('No tags available') unless raw.length > 0
+      tags = raw.split('\n')[...-1]
+      Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
 
   # Public: Initialize the git repository.
   init: ->
@@ -199,9 +199,9 @@ class PromisedGit
       'max-count': limit
 
     @cmd 'rev-list', options, ref
-      .then (commitsRaw) =>
-        commitsRaw = commitsRaw.split('\0')?[...-1] or []
-        new Commit(raw, this) for raw in commitsRaw
+    .then (commitsRaw) =>
+      commitsRaw = commitsRaw.split('\0')?[...-1] or []
+      new Commit(raw, this) for raw in commitsRaw
 
   # Public: Refresh the git index.
   #

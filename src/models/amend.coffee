@@ -43,7 +43,7 @@ class Amend
   # Returns: Promise.
   commit: (message) ->
     message = @origMessage unless _.isString(message)
-    @repo.commit(message).then (stdout) => stdout
+    @repo.commit(message).then (stdout) -> stdout
 
   # Public: Get the original commit message.
   #
