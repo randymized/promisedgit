@@ -23,8 +23,7 @@ class Treeish
   # Returns: A new instance of {Treeish}.
   constructor: (@ref, @repo) ->
     throw new Error('Invalid ref') unless _.isString(@ref)
-    if not _.instanceOf(@repo, 'PromisedGit')
-      throw new Error('Invalid repository instance')
+    throw new Error('Invalid repository object') unless _.isPromisedGit(@repo)
 
   # Public: Checkout the {Treeish} in git.
   #
@@ -51,7 +50,7 @@ class Treeish
   #
   # Returns a Promise that resolves to an instance of {Diff}.
   diffTo: (oid='HEAD', options={}) ->
-    oid = oid.ref if oid instanceof Treeish
+    oid = oid.ref if _.isTreeish(oid)
     options = _.extend options, {treeish: "#{@ref}..#{oid}"}
     return @repo.getDiff(options) if _.isString(oid)
     return Promise.reject(new Error('Invalid oid'))
@@ -63,7 +62,7 @@ class Treeish
   #
   # Returns a Promise that resolves to an instance of {Diff}.
   diffFrom: (oid='HEAD', options={}) ->
-    oid = oid.ref if oid instanceof Treeish
+    oid = oid.ref if _.isTreeish(oid)
     options = _.extend options,{treeish: "#{oid}..#{@ref}"}
     return @repo.getDiff(options) if _.isString(oid)
     return Promise.reject(new Error('Invalid oid'))
@@ -75,7 +74,7 @@ class Treeish
   # Returns a Promise that resolves to a {String} with the content of file at
   #   this treeish.
   showFile: (file) ->
-    return file.show(@ref) if file instanceof File
+    return file.show(@ref) if _.isFile(file)
     return @repo.show(@ref, file) if _.isString(file)
     return Promise.reject(new Error('Invalid file'))
 

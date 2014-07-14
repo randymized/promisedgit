@@ -17,10 +17,10 @@ class Amend
   # message - The original commit message as {String}.
   # repo    - The repository as {PromisedGit}.
   constructor: (@origMessage='', @repo) ->
-    if _.instanceOf(@origMessage, 'PromisedGit')
+    if _.isPromisedGit(@origMessage)
       [@origMessage, @repo] = ['', @origMessage]
-    if not _.instanceOf(@repo, 'PromisedGit')
-      throw new Error('Invalid git repository object')
+    else if not _.isPromisedGit(@repo)
+      throw new Error('Invalid repository object')
 
     @origMessage = "#{@origMessage?.trim()}\n"
     @repo.reset 'HEAD^', soft: true

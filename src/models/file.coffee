@@ -15,10 +15,10 @@ class File
   # repo - The repository as {PromisedGit}.
   # mode - The porcelain status as {String}.
   constructor: (@path, @repo, @mode='  ') ->
-    if not _.instanceOf(@repo, 'PromisedGit')
-      throw new Error('Invalid git repository object')
-    if not _.isString(@path) and fs.existsSync(@path)
-      throw new Error('Invalid file path')
+    if not _.isPromisedGit(@repo)
+      throw new Error('Invalid repository object')
+    else if not _.isString(@path)
+      throw new Error('Invalid file name')
     @parseMode()
 
   # Public: Update the porcelain status.
@@ -88,6 +88,6 @@ class File
   show: (oid='HEAD') ->
     oid = oid.ref if _.isString(oid.ref)
     return @repo.show(oid, @path) if _.isString(oid)
-    Promise.reject(new Error('Invalid oid.'))
+    Promise.reject(new Error('Invalid oid'))
 
 module.exports = File

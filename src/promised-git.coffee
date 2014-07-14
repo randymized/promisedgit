@@ -52,8 +52,8 @@ class PromisedGit
   # Returns: Promise.
   add: (file) ->
     if _.isArray(file)
-      file = _.map file, (val) -> if val instanceof File then val.path else val
-    else if file instanceof File
+      file = _.map file, (val) -> if _.isFile(val) then val.path else val
+    else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
       file = '.'
@@ -88,8 +88,8 @@ class PromisedGit
       treeish: oid
 
     if _.isArray(file)
-      file = _.map(file, (val) -> if val instanceof File then val.path else val)
-    else if file instanceof File
+      file = _.map(file, (val) -> if _.isFile(val) then val.path else val)
+    else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
       return Promise.reject new Error("Invalid file: '#{file}'")
@@ -225,7 +225,7 @@ class PromisedGit
   #
   # Returns: Promise.
   reset: (oid='HEAD', options={}) ->
-    oid = oid.ref if oid instanceof Treeish
+    oid = oid.ref if _.isTreeish(oid)
     [oid, options] = ['HEAD', oid] if _.isPlainObject(oid)
 
     @cmd 'reset', options, oid
@@ -236,7 +236,7 @@ class PromisedGit
   #
   # Returns a Promise that resolves to the rev-parsed oid.
   revParse: (oid='HEAD', options={}) ->
-    oid = oid.ref if oid instanceof Treeish
+    oid = oid.ref if _.isTreeish(oid)
     return Promise.reject(new Error('Invalid oid')) unless _.isString(oid)
 
     @cmd 'rev-parse', options, oid
@@ -252,8 +252,8 @@ class PromisedGit
   #
   # Returns: Promise.
   show: (oid, file, options) ->
-    [oid, file] = [file, oid] if file instanceof Treeish
-    [oid, file] = [file, oid] if oid instanceof File
+    [oid, file] = [file, oid] if _.isTreeish(file)
+    [oid, file] = [file, oid] if _.isFile(oid)
 
     [options, file] = [file, null] if _.isPlainObject(file)
     [options, oid]  = [oid, null]  if _.isPlainObject(oid)
@@ -262,9 +262,9 @@ class PromisedGit
       isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, oid))
       [oid, file] = [file, oid] if isTreeishAnExistingPath
 
-    oid = oid.ref if oid instanceof Treeish
+    oid = oid.ref if _.isTreeish(oid)
     oid = '' unless _.isString(oid)
-    file = file.path if file instanceof File
+    file = file.path if _.isFile(file)
     file = '' unless _.isString(file)
     file = ":#{file}" unless file.length is 0 or oid.length is 0
 
@@ -289,8 +289,8 @@ class PromisedGit
   # Returns: Promise.
   unstage: (file) ->
     if _.isArray(file)
-      file = _.map file, (val) -> if val instanceof File then val.path else val
-    else if file instanceof File
+      file = _.map file, (val) -> if _.isFile(val) then val.path else val
+    else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
       file = '.'

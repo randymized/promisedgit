@@ -4,32 +4,97 @@
 
 lodash = require 'lodash'
 
-# Public: Similar `instanceof` operator, but checks for the `constructor.name`.
+# Public: Check if obj is an instance of {Actor}.
 #
-# ### Caution
-# Uglifying scripts will __break__ this method, so be careful!
+# obj - The object to check as {Object}.
 #
-# obj   - The object to test as {Object}.
-# klass - The klass name as {String}|{Function}.
+# Returns {Boolean}.
+isActor = (obj) ->
+  Actor = require './models/actor'
+  obj instanceof Actor
+
+# Public: Check if obj is an instance of {Amend}.
 #
-# ### Example
-# ```coffee
-# testCommit = new Commit('e9e3ad6a71996fb83440df2ac36912e2ddb555e0', git)
-# _.instanceOf(testCommit, 'Commit')  # => true
-# _.instanceOf(testCommit, 'Treeish') # => true
-# _.instanceOf(testCommit, 'Object')  # => true
-# _.instanceOf(testCommit, 'File')    # => false
-# _.instanceOf(testCommit, 'Array')   # => false
-# ```
+# obj - The object to check as {Object}.
 #
-# Returns: {Boolean}.
-instanceOf = (obj, klass) ->
-  return obj instanceof klass if lodash.isFunction(klass)
-  obj = Object.getPrototypeOf(obj)
-  while obj?
-    return true if obj.constructor.name is klass
-    obj = Object.getPrototypeOf(obj)
-  false
-lodash.mixin({'instanceOf': instanceOf}, {'chain': false})
+# Returns {Boolean}.
+isAmend = (obj) ->
+  Amend = require './models/amend'
+  obj instanceof Amend
+
+# Public: Check if obj is an instance of {Commit}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isCommit = (obj) ->
+  Commit = require './models/commit'
+  obj instanceof Commit
+
+# Public: Check if obj is an instance of {Diff}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isDiff = (obj) ->
+  Diff = require './models/diff'
+  obj instanceof Diff
+
+# Public: Check if obj is an instance of {File}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isFile = (obj) ->
+  File = require './models/file'
+  obj instanceof File
+
+# Public: Check if obj is an instance of {Status}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isStatus = (obj) ->
+  Status = require './models/status'
+  obj instanceof Status
+
+# Public: Check if obj is an instance of {Tag}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isTag = (obj) ->
+  Tag = require './models/tag'
+  obj instanceof Tag
+
+# Public: Check if obj is an instance of {Treeish}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isTreeish = (obj) ->
+  Treeish = require './models/treeish'
+  obj instanceof Treeish
+
+# Public: Check if obj is an instance of {PromisedGit}.
+#
+# obj - The object to check as {Object}.
+#
+# Returns {Boolean}.
+isPromisedGit = (obj) ->
+  PromisedGit = require './promised-git'
+  obj instanceof PromisedGit
+
+extension =
+  'isActor'       : isActor
+  'isAmend'       : isAmend
+  'isCommit'      : isCommit
+  'isDiff'        : isDiff
+  'isFile'        : isFile
+  'isStatus'      : isStatus
+  'isTag'         : isTag
+  'isTreeish'     : isTreeish
+  'isPromisedGit' : isPromisedGit
+lodash.mixin(extension, {'chain': false})
 
 module.exports = lodash

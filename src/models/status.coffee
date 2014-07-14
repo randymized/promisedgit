@@ -12,8 +12,7 @@ class Status
   # raw  - The raw porcelain status as {String}.
   # repo - The repository as {PromisedGit}.
   constructor: (raw, @repo) ->
-    if not _.instanceOf(@repo, 'PromisedGit')
-      throw new Error('Invalid git repository object')
+    throw new Error('Invalid repository object') unless _.isPromisedGit(@repo)
     @parseRaw(raw)
 
   # Internal: Parses the raw data.
