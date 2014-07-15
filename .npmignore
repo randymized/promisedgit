@@ -5,3 +5,4 @@ test/
 .biscottoopts
 .gitignore
 Gruntfile.coffee
+coverage.html

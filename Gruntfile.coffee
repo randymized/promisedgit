@@ -3,11 +3,14 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-exec'
   grunt.loadNpmTasks 'grunt-release'
   grunt.loadNpmTasks 'grunt-gh-pages'
+  grunt.loadNpmTasks 'grunt-coffee-coverage'
   grunt.loadNpmTasks 'grunt-mocha-test'
   grunt.loadNpmTasks 'grunt-coffeelint'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-copy'
 
   grunt.initConfig
+
     'coffee':
       compile:
         expand: true
@@ -15,6 +18,18 @@ module.exports = (grunt) ->
         src: '**/*.coffee'
         dest: 'lib/'
         ext: '.js'
+      compileForCoverage:
+        expand: true
+        cwd: "#{__dirname}"
+        src: ['test/*.coffee', 'test/models/*.coffee']
+        dest: '.grunt'
+        ext: '.js'
+
+    'copy':
+      copyFixturesCoverage:
+        files: [
+          {expand: true, cwd: 'test/fixtures/', src: ['**'], dest: '.grunt/test/fixtures'},
+        ]
 
     'coffeelint':
       app: ['src/**/*.coffee']
@@ -52,6 +67,23 @@ module.exports = (grunt) ->
           reporter: 'spec'
           require: 'coffee-script/register'
         src: ['test/*.coffee', 'test/models/*.coffee']
+      coverage:
+        options:
+          reporter: 'html-cov'
+          quiet: true
+          captureFile: 'coverage.html'
+          # require: '.grunt/src/init.js'
+        src: '.grunt/test/**/*.js'
+
+    'coffeeCoverage':
+      options:
+        path: 'relative'
+        initfile: '.grunt/src/init.js'
+      cov:
+        options:
+          initfile: '.grunt/src/init.js'
+        src: 'src'
+        dest: '.grunt/src'
 
     'exec':
       build_docs:
@@ -81,4 +113,10 @@ module.exports = (grunt) ->
   grunt.registerTask('test', 'mochaTest')
 
   grunt.registerTask('default', 'prepublish')
+  grunt.registerTask 'coverage', [
+    'coffeeCoverage'
+    'coffee:compileForCoverage'
+    'copy:copyFixturesCoverage'
+    'mochaTest:coverage'
+  ]
   grunt.registerTask('prepublish', ['lint', 'test', 'build'])
