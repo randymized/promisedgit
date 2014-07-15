@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_       = require 'lodash'
+_       = require './lodash'
 fs      = require 'fs'
 Promise = require 'bluebird'
 {exec}  = require 'child_process'
@@ -23,24 +23,23 @@ class GitWrapper
   @cmd: (command, options, args, cwd) ->
     if _.isArray(options) or _.isString(options)
       [args, cwd] = [options, args]
-    command = 'git ' + command if command.substring(0, 4) isnt 'git '
 
     # `options` and `args` are optional, `cwd` is not.
-    if not fs.existsSync(cwd)
-      [options, cwd] = [null, options] if fs.existsSync(options)
-      [args, cwd] = [null, args] if fs.existsSync(options)
-
-    if not fs.existsSync(cwd)
+    if not fs.existsSync(cwd) and fs.existsSync(args)
+      [cwd, args] = [args, null]
+    else if not fs.existsSync(cwd)
       throw new Error("'#{cwd}' is no valid repository path!")
 
     args = args_to_argv(args)
     options = options_to_argv(options)
     command = "#{command} #{options} #{args}"
+    command = 'git ' + command if command.substring(0, 4) isnt 'git '
+
     new Promise (resolve, reject) ->
       exec command,                         # Command
       {cwd: cwd, maxBuffer: 100*1024*1024}, # Options
       (error, stdout, stderr) ->            # Callback
-        reject error if error?
+        reject error if error
         resolve stdout
 
   # Private: Converts the options object into an array.
@@ -85,8 +84,15 @@ class GitWrapper
   #
   # Returns the escaped command as {String}.
   escapeShellArg = (cmd) ->
-    cmd = cmd.trim() if _.isString(cmd)
-    cmd = '\"' + cmd.replace(/\"/g, '"\\""') + '\"' if ' ' in cmd or '"' in cmd
-    cmd
+    if _.isString(cmd)
+      cmd = cmd.trim()
+      if ' ' in cmd or '"' in cmd
+        '\"' + cmd.replace(/\"/g, '"\\""') + '\"'
+      else
+        cmd
+    else if _.isNumber(cmd)
+      cmd
+    else
+      ''
 
 module.exports = GitWrapper.cmd

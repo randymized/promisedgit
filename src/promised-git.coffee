@@ -42,7 +42,8 @@ class PromisedGit
   #
   # cwd - The path of the git repository as {String}.
   constructor: (@cwd) ->
-    throw new Error("'#{cwd}' does not exist!") unless fs.existsSync(cwd)
+    if not fs.existsSync(cwd)
+      throw new Error("'#{cwd}' does not exist!")
 
   # Public: Add file(s) to the index.
   #
@@ -51,7 +52,11 @@ class PromisedGit
   # Returns: Promise.
   add: (file) ->
     if _.isArray(file)
-      file = _.map file, (val) -> if _.isFile(val) then val.path else val
+      file = _.map file, (val) ->
+        if _.isFile(val)
+          val.path
+        else
+          val
     else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
@@ -87,7 +92,11 @@ class PromisedGit
       treeish: oid
 
     if _.isArray(file)
-      file = _.map(file, (val) -> if _.isFile(val) then val.path else val)
+      file = _.map file, (val) ->
+        if _.isFile(val)
+          val.path
+        else
+          val
     else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
@@ -124,7 +133,8 @@ class PromisedGit
       return Promise.reject(new Error('No commit message!'))
 
     # Set '--cleanup=strip' unless '--cleanup' has already been set.
-    options.cleanup = 'strip' unless _.has(options, 'cleanup')
+    if not _.has(options, 'cleanup')
+      options.cleanup = 'strip'
 
     if fs.existsSync(message)
       options.file = message
@@ -143,7 +153,8 @@ class PromisedGit
   # Returns: Promise resolving to {Diff} if you passed a single path or to an
   #          {Array} of {Diff}s if you passed an {Array} or nothing for file.
   getDiff: (file, options={}) ->
-    [options, file] = [file, null] if _.isPlainObject(file)
+    if _.isPlainObject(file)
+      [options, file] = [file, null]
 
     if not (_.has(options, 'treeish') or file?)
       @status().then (o) =>
@@ -162,8 +173,10 @@ class PromisedGit
       _.extend options, {'p': true, 'unified': 1, 'no-color': true}
       @cmd 'diff', options, file
       .then (raw) ->
-        return new Diff(file, raw) if raw?.length > 0
-        throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
+        if not raw?.length > 0
+          throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
+        new Diff(file, raw)
+
 
   # Public: Retrieve the maxCount newest tags.
   #
@@ -178,7 +191,8 @@ class PromisedGit
 
     @cmd 'for-each-ref', options, 'refs/tags/'
     .then (raw) =>
-      return throw new Error('No tags available') unless raw.length > 0
+      if not raw?.length > 0
+        throw new Error('No tags available')
       tags = raw.split('\n')[...-1]
       Promise.map tags, (tagRaw) => new Tag(tagRaw, this)
 
@@ -224,8 +238,10 @@ class PromisedGit
   #
   # Returns: Promise.
   reset: (oid='HEAD', options={}) ->
-    oid = oid.ref if _.isTreeish(oid)
-    [oid, options] = ['HEAD', oid] if _.isPlainObject(oid)
+    if _.isTreeish(oid)
+      oid = oid.ref
+    else if _.isPlainObject(oid)
+      [oid, options] = ['HEAD', oid]
 
     @cmd 'reset', options, oid
 
@@ -235,8 +251,10 @@ class PromisedGit
   #
   # Returns a Promise that resolves to the rev-parsed oid.
   revParse: (oid='HEAD', options={}) ->
-    oid = oid.ref if _.isTreeish(oid)
-    return Promise.reject(new Error('Invalid oid')) unless _.isString(oid)
+    if _.isTreeish(oid)
+      oid = oid.ref
+    else if not _.isString(oid)
+      return Promise.reject(new Error 'Invalid oid')
 
     @cmd 'rev-parse', options, oid
 
@@ -251,21 +269,33 @@ class PromisedGit
   #
   # Returns: Promise.
   show: (oid, file, options) ->
-    [oid, file] = [file, oid] if _.isTreeish(file)
-    [oid, file] = [file, oid] if _.isFile(oid)
+    if _.isTreeish(file)
+      [oid, file] = [file, oid]
+    else if _.isFile(oid)
+      [oid, file] = [file, oid]
 
-    [options, file] = [file, null] if _.isPlainObject(file)
-    [options, oid]  = [oid, null]  if _.isPlainObject(oid)
+    if _.isPlainObject(file)
+      [options, file] = [file, null]
+    else if _.isPlainObject(oid)
+      [options, oid]  = [oid, null]
 
     if not file? and _.isString(oid)
       isTreeishAnExistingPath = fs.existsSync(path.join(@cwd, oid))
-      [oid, file] = [file, oid] if isTreeishAnExistingPath
+      if isTreeishAnExistingPath
+        [oid, file] = [file, oid]
 
-    oid = oid.ref if _.isTreeish(oid)
-    oid = '' unless _.isString(oid)
-    file = file.path if _.isFile(file)
-    file = '' unless _.isString(file)
-    file = ":#{file}" unless file.length is 0 or oid.length is 0
+    if _.isTreeish(oid)
+      oid = oid.ref
+    else if not _.isString(oid)
+      oid = ''
+
+    if _.isFile(file)
+      file = file.path
+    else if not _.isString(file)
+      file = ''
+
+    if file.length isnt 0 and oid.length isnt 0
+      file = ":#{file}"
 
     @cmd 'show', options, "#{oid}#{file}"
 
@@ -288,7 +318,11 @@ class PromisedGit
   # Returns: Promise.
   unstage: (file) ->
     if _.isArray(file)
-      file = _.map file, (val) -> if _.isFile(val) then val.path else val
+      file = _.map file, (val) ->
+        if _.isFile(val)
+          val.path
+        else
+          val
     else if _.isFile(file)
       file = file.path
     else if not _.isString(file)
