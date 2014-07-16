@@ -107,10 +107,10 @@ module.exports = (grunt) ->
         tagName: 'v<%= version %>'
         commitMessage: 'Prepare v<%= version %> release'
 
-  grunt.registerTask('build', 'coffee')
+  grunt.registerTask('build', 'coffee:compile')
   grunt.registerTask('docs', ['exec:build_docs', 'gh-pages'])
   grunt.registerTask('lint', 'coffeelint')
-  grunt.registerTask('test', 'mochaTest')
+  grunt.registerTask('test', 'mochaTest:test')
 
   grunt.registerTask('default', 'prepublish')
   grunt.registerTask 'coverage', [
