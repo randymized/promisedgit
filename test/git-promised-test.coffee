@@ -90,6 +90,7 @@ describe 'Git-Promised', ->
       git.init()
 
     describe 'when we pass a file', ->
+
       describe 'when it exists', ->
 
         describe 'when it contains staged diffs', ->
@@ -136,6 +137,7 @@ describe 'Git-Promised', ->
             o[0].chunks.should.have.length(1)
 
     describe 'when we pass multiple files', ->
+
       describe 'when only some of them contain diffs', ->
         it 'returns Diff-Objects for the files that have diffs', ->
           git.getDiff(['a.coffee', 'b.coffee']).then (o) ->
@@ -197,6 +199,7 @@ describe 'Git-Promised', ->
       git = new Git(prepareFixture('testDir'))
 
     describe 'when we pass a file', ->
+
       describe 'when it exists', ->
         it 'checks it out', ->
           git.checkoutFile('b.coffee')
@@ -222,6 +225,7 @@ describe 'Git-Promised', ->
       git.init()
 
     describe 'when we reset without passing a oid (defaults to HEAD)', ->
+
       describe 'when we use no or the --mixed flag', ->
         it 'removes the file from index, leaves it in working tree', ->
           git.reset()
@@ -250,6 +254,7 @@ describe 'Git-Promised', ->
             o.untracked.should.have.length(1)
 
     describe 'when we reset to a specific oid', ->
+
       describe 'when we use no or the --mixed flag', ->
         it 'resets to HEAD~1, changes stay in the working tree', ->
           git.reset('HEAD~1')
@@ -471,6 +476,7 @@ describe 'Git-Promised', ->
             .should.eventually.be.rejected
 
     describe 'when we only pass a oid', ->
+
       describe 'when we pass a Treeish instance', ->
         describe 'when it is existing', ->
           it 'returns the oid itself', ->
@@ -488,6 +494,7 @@ describe 'Git-Promised', ->
             git.show(oidNotExistingString).should.eventually.be.rejected
 
     describe 'when we only pass a file', ->
+
       describe 'when we pass a File instance', ->
         describe 'when it is existing', ->
           it 'returns the changes made to the file by HEAD', ->
@@ -543,6 +550,7 @@ describe 'Git-Promised', ->
         it 'commits using the passed message', ->
           commitMessage = 'Very important changes'
           git.commit(commitMessage).should.eventually.contain commitMessage
+
       describe 'when we pass a valid file path', ->
         it 'commits using the content as commit message', ->
           path = path.join git.cwd, '.git/COMMIT_EDITMSG'

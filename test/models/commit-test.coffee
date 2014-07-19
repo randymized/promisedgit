@@ -7,6 +7,7 @@ prepareFixture = require '../helper'
 {Commit} = require '../../src/models'
 
 describe 'Commit', ->
+
   describe 'Prototype functions', ->
     # Initialize empty comparison variables.
     [
