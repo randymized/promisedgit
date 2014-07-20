@@ -50,8 +50,12 @@ class Treeish
   #
   # Returns a Promise that resolves to an instance of {Diff}.
   diffTo: (oid='HEAD', options={}) ->
-    oid = oid.ref if _.isTreeish(oid)
+    if _.isTreeish(oid)
+      oid = oid.ref
+    else if _.isPlainObject(oid)
+      [options, oid] = [oid, 'HEAD']
     options = _.extend options, {treeish: "#{@ref}..#{oid}"}
+
     return @repo.getDiff(options) if _.isString(oid)
     return Promise.reject(new Error('Invalid oid'))
 
@@ -62,7 +66,10 @@ class Treeish
   #
   # Returns a Promise that resolves to an instance of {Diff}.
   diffFrom: (oid='HEAD', options={}) ->
-    oid = oid.ref if _.isTreeish(oid)
+    if _.isTreeish(oid)
+      oid = oid.ref
+    else if _.isPlainObject(oid)
+      [options, oid] = [oid, 'HEAD']
     options = _.extend options,{treeish: "#{oid}..#{@ref}"}
     return @repo.getDiff(options) if _.isString(oid)
     return Promise.reject(new Error('Invalid oid'))

@@ -99,7 +99,6 @@ describe 'Treeish', ->
 
         describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            oid.diffTo({}).should.be.rejected
             oid.diffTo('INVALID').should.be.rejected
 
       describe '#diffFrom()', ->
@@ -129,7 +128,6 @@ describe 'Treeish', ->
 
         describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            oid.diffFrom({}).should.be.rejected
             oid.diffFrom('INVALID').should.be.rejected
 
       describe '#showFile()', ->
@@ -152,7 +150,6 @@ describe 'Treeish', ->
         describe 'when we pass an invalid file', ->
           it 'rejects the promise', ->
             oid.showFile().should.be.rejected
-            oid.showFile({}).should.be.rejected
             oid.showFile('WhyYouNoExist').should.be.rejected
 
       describe '#reset()', ->
@@ -210,7 +207,6 @@ describe 'Treeish', ->
 
         describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            oidOid.diffTo({}).should.be.rejected
             oidOid.diffTo('INVALID').should.be.rejected
 
       describe '#diffFrom()', ->
@@ -240,7 +236,6 @@ describe 'Treeish', ->
 
         describe 'when the oid we pass is not valid', ->
           it 'rejects the promise', ->
-            oidOid.diffFrom({}).should.be.rejected
             oidOid.diffFrom('INVALID').should.be.rejected
 
       describe '#showFile()', ->
@@ -263,7 +258,6 @@ describe 'Treeish', ->
         describe 'when we pass an invalid file', ->
           it 'rejects the promise', ->
             oidOid.showFile().should.be.rejected
-            oidOid.showFile({}).should.be.rejected
             oidOid.showFile('WhyYouNoExist').should.be.rejected
 
       describe '#reset()', ->
@@ -317,7 +311,6 @@ describe 'Treeish', ->
 
       describe 'when the oid we pass is not valid', ->
         it 'rejects the promise', ->
-          oidFirst.diffTo({}).should.be.rejected
           oidFirst.diffTo('INVALID').should.be.rejected
 
     describe '#diffFrom()', ->
@@ -347,7 +340,6 @@ describe 'Treeish', ->
 
       describe 'when the oid we pass is not valid', ->
         it 'rejects the promise', ->
-          oidFirst.diffFrom({}).should.be.rejected
           oidFirst.diffFrom('INVALID').should.be.rejected
 
     describe '#showFile()', ->

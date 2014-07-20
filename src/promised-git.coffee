@@ -78,6 +78,8 @@ class PromisedGit
   #
   # Returns: Promise.
   checkout: (oid='HEAD', options={}) ->
+    if _.isPlainObject(oid)
+      [options, oid] = [oid, 'HEAD']
     @cmd 'checkout', options, oid
 
   # Public: Checkout file.
@@ -241,7 +243,7 @@ class PromisedGit
     if _.isTreeish(oid)
       oid = oid.ref
     else if _.isPlainObject(oid)
-      [oid, options] = ['HEAD', oid]
+      [options, oid] = [oid, 'HEAD']
 
     @cmd 'reset', options, oid
 
@@ -253,6 +255,8 @@ class PromisedGit
   revParse: (oid='HEAD', options={}) ->
     if _.isTreeish(oid)
       oid = oid.ref
+    else if _.isPlainObject(oid)
+      [options, oid] = [oid, 'HEAD']
     else if not _.isString(oid)
       return Promise.reject(new Error 'Invalid oid')
 
