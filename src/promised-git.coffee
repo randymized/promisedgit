@@ -47,6 +47,24 @@ class PromisedGit
 
   # Public: Add file(s) to the index.
   #
+  # ###Example
+  # ```coffee
+  #   Git = require 'promised-git'
+  #   git = new Git('/tmp/exampleRepo')
+  #
+  #   git.add()                       # => Adds all unstaged changes to the index.
+  #   git.add('a.coffee')             # => Adds 'a.coffee' to the index.
+  #   git.add('a.coffee', 'b.coffee') # => Adds 'a.coffee' and 'b.coffee' to the index.
+  # ```
+  # You can use instances of {File} instead of the path:
+  # ```coffee
+  #   Git = require 'promised-git'
+  #   git = new Git('/tmp/exampleRepo')
+  #
+  #   git.status().then (o) ->
+  #     file = o.unstaged[0]
+  #     git.add(file)                 # => Adds the first unstaged {File} to the index.
+  # ```
   # file - The file(s) to add as {String}|{File}|{Array}.
   #
   # Returns: Promise.
