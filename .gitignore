@@ -8,8 +8,9 @@ node_modules
 # Compiled javascript
 lib
 
-# This file is used for developing.
+# This files are used for developing.
 src/test.coffee
 doc/
 .grunt/
 coverage.html
+tags

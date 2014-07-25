@@ -6,3 +6,4 @@ test/
 .gitignore
 Gruntfile.coffee
 coverage.html
+tags
