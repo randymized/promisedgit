@@ -32,7 +32,7 @@ module.exports = (grunt) ->
         ]
 
     'coffeelint':
-      app: ['src/**/*.coffee']
+      app: ['src/**/*.coffee', 'test/*.coffee', 'test/models/*.coffee']
       options:
         arrow_spacing:
           level: 'warn'
