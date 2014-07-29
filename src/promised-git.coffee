@@ -197,7 +197,6 @@ class PromisedGit
           throw new Error("'#{file}' has no diffs! Forgot '--cached'?")
         new Diff(file, raw)
 
-
   # Public: Retrieve the maxCount newest tags.
   #
   # maxCount - The maximum amount of tags to return as {Number}.
