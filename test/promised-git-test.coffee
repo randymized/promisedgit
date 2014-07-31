@@ -565,3 +565,6 @@ describe 'Git-Promised', ->
       it 'rejects the promise', ->
         git.reset(hard: true).then ->
           git.commit('I forgot to add').should.eventually.be.rejected
+
+  describe '#getBranches()', ->
+    

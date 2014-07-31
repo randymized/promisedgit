@@ -8,7 +8,7 @@ path    = require 'path'
 Promise = require 'bluebird'
 
 git = require './git-wrapper'
-{Amend, Commit, Diff, File, Status, Tag, Treeish} = require './models'
+{Amend, Branch, Commit, Diff, File, Status, Tag, Treeish} = require './models'
 
 # Public: Main class. Instances represent the whole git repository.
 #
@@ -162,6 +162,47 @@ class PromisedGit
       options.m = message
 
     @cmd 'commit', options
+
+  # Public: Returns the local branches.
+  #
+  # Returns the local branches as {Array} of {Branch}.
+  getBranches: ->
+    [commits, branches] = [[],[]]
+
+    @cmd 'show-ref', {'heads': true}
+    .then (raw) =>
+      raw = raw.split('\n')?[...-1] or []
+      for rawBranch in raw
+        [oid, rawName] = rawBranch.split(' ')
+
+        name = rawName.split('refs/heads/')[1]
+        commit = @getCommit(oid)
+
+        commits.push commit
+        branches.push new Branch(name, null)
+
+      Promise.all(commits)
+    .then ->
+      for branch, i in branches
+        branch.commit = commits[i].value()
+
+      branches
+
+  # Public: Return the {Commit} at oid.
+  #
+  # oid     - The oid as {String}.
+  # options - The options as plain {Object}.
+  #
+  # Returns the commit at oid as {Commit}.
+  getCommit: (oid, options={}) ->
+    if not _.isString(oid)
+      Promise.reject(new Error 'Invalid oid')
+    _.extend options, {'pretty': 'raw'}
+
+    @show oid, null, options
+    .then (raw) =>
+      new Commit(raw, this)
+
 
   # Public: Get the diff for a file.
   #
