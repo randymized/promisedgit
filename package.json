@@ -13,12 +13,12 @@
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/promisedgit/promisedgit.git"
+    "url": "https://github.com/maschs/promisedgit.git"
   },
   "bugs": {
-    "url": "https://github.com/promisedgit/promisedgit/issues"
+    "url": "https://github.com/maschs/promisedgit/issues"
   },
-  "homepage": "https://github.com/promisedgit/promisedgit",
+  "homepage": "https://github.com/maschs/promisedgit",
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -40,7 +40,6 @@
     "grunt-mocha-test": "^0.11.0",
     "grunt-release": "^0.7.0",
     "mocha": "~1.20.1",
-    "prettyjson": "~1.0.0",
     "temp": "~0.8.0",
     "wrench": "~1.5.8"
   },
