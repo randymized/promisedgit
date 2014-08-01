@@ -566,5 +566,20 @@ describe 'Git-Promised', ->
         git.reset(hard: true).then ->
           git.commit('I forgot to add').should.eventually.be.rejected
 
-  describe '#getBranches()', ->
-    
+  describe '#branches()', ->
+    git = null
+    beforeEach ->
+      git = new Git(prepareFixture('branches'))
+
+    it 'returns all of the local branches', ->
+      git.branches().then (o) ->
+        o.length.should.eql 3
+
+        o[0].name.should.eql 'master'
+        o[0].commit.ref.should.eql 'a35e3c50aaa26e2c1b74d517f533ac87550d0384'
+
+        o[1].name.should.eql 'second-branch'
+        o[1].commit.ref.should.eql 'a35e3c50aaa26e2c1b74d517f533ac87550d0384'
+
+        o[2].name.should.eql 'third-branch'
+        o[2].commit.ref.should.eql '82409cefeb8652e07c5f9499730d98071edb1e9b'
