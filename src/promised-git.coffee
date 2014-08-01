@@ -166,7 +166,7 @@ class PromisedGit
   # Public: Returns the local branches.
   #
   # Returns the local branches as {Array} of {Branch}.
-  getBranches: ->
+  branches: ->
     [commits, branches] = [[],[]]
 
     @cmd 'show-ref', {'heads': true}
