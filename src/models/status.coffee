@@ -2,7 +2,7 @@
 # Copyright (c) 2014 by Maximilian Schüßler. See LICENSE for details.
 #
 
-_ = require '../lodash'
+_    = require '../lodash'
 File = require './file'
 
 # Public: Represents the git status for the whole repository.

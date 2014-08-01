@@ -4,8 +4,8 @@
 
 _ = require '../lodash'
 
-Actor = require './actor'
-Diff = require './diff'
+Actor   = require './actor'
+Diff    = require './diff'
 Treeish = require './treeish'
 
 # Public: Handles commit amending.

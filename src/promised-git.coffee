@@ -171,22 +171,20 @@ class PromisedGit
 
     @cmd 'show-ref', {'heads': true}
     .then (raw) =>
-      raw = raw.split('\n')?[...-1] or []
-      for rawBranch in raw
+      for rawBranch in raw.split('\n')?[...-1] or []
         [oid, rawName] = rawBranch.split(' ')
 
-        name = rawName.split('refs/heads/')[1]
-        commit = @getCommit(oid)
+        commits.push @getCommit(oid)
+        branches.push new Branch(rawName.split('refs/heads/')[1], null)
 
-        commits.push commit
-        branches.push new Branch(name, null)
-
+      # Wait for all {Commit} promises to be fulfilled!
       Promise.all(commits)
     .then ->
-      for branch, i in branches
-        branch.commit = commits[i].value()
-
-      branches
+      # Since all commit promises have been fulfilled, we can make use of
+      # ::value() to determine its final value and update our {Branch} instances
+      # accordingly.
+      branch.commit = commits[i].value() for branch, i in branches
+      return branches
 
   # Public: Return the {Commit} at oid.
   #
