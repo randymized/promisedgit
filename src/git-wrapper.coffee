@@ -39,8 +39,11 @@ class GitWrapper
       exec command,                         # Command
       {cwd: cwd, maxBuffer: 100*1024*1024}, # Options
       (error, stdout, stderr) ->            # Callback
-        reject error if error
-        resolve stdout
+        if error
+          error.message = stderr
+          reject(error)
+        else
+          resolve stdout
 
   # Private: Converts the options object into an array.
   #
