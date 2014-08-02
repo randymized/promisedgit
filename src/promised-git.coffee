@@ -89,6 +89,29 @@ class PromisedGit
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
 
+  # Public: Returns the local branches.
+  #
+  # Returns the local branches as {Array} of {Branch}.
+  branches: ->
+    [commits, branches] = [[],[]]
+
+    @cmd 'show-ref', {'heads': true}
+    .then (raw) =>
+      for rawBranch in raw.split('\n')?[...-1] or []
+        [oid, rawName] = rawBranch.split(' ')
+
+        commits.push @getCommit(oid)
+        branches.push new Branch(rawName.split('refs/heads/')[1], null)
+
+      # Wait for all {Commit} promises to be fulfilled!
+      Promise.all(commits)
+    .then ->
+      # Since all commit promises have been fulfilled, we can make use of
+      # ::value() to determine its final value and update our {Branch} instances
+      # accordingly.
+      branch.commit = commits[i].value() for branch, i in branches
+      return branches
+
   # Public: Checkout a oid.
   #
   # oid     - The oid to checkout as {String}|{Treeish}.
@@ -162,29 +185,6 @@ class PromisedGit
       options.m = message
 
     @cmd 'commit', options
-
-  # Public: Returns the local branches.
-  #
-  # Returns the local branches as {Array} of {Branch}.
-  branches: ->
-    [commits, branches] = [[],[]]
-
-    @cmd 'show-ref', {'heads': true}
-    .then (raw) =>
-      for rawBranch in raw.split('\n')?[...-1] or []
-        [oid, rawName] = rawBranch.split(' ')
-
-        commits.push @getCommit(oid)
-        branches.push new Branch(rawName.split('refs/heads/')[1], null)
-
-      # Wait for all {Commit} promises to be fulfilled!
-      Promise.all(commits)
-    .then ->
-      # Since all commit promises have been fulfilled, we can make use of
-      # ::value() to determine its final value and update our {Branch} instances
-      # accordingly.
-      branch.commit = commits[i].value() for branch, i in branches
-      return branches
 
   # Public: Return the {Commit} at oid.
   #
@@ -283,6 +283,29 @@ class PromisedGit
       refresh: true
 
     @cmd 'add', options, '.'
+
+  # Public: Returns the remote branches.
+  #
+  # Returns the remote branches as {Array} of {Branch}.
+  remoteBranches: ->
+    [commits, branches] = [[],[]]
+
+    @cmd 'for-each-ref', 'refs/remotes'
+    .then (raw) =>
+      for rawBranch in raw?.split?('\n')?[...-1] or []
+        [oid, rawName] = rawBranch?.split('commit')
+
+        commits.push @getCommit(oid.trim())
+        branches.push new Branch(rawName?.trim().split('refs/remotes/')[1], null)
+
+      # Wait for all {Commit} promises to be fulfilled!
+      Promise.all(commits)
+    .then ->
+      # Since all commit promises have been fulfilled, we can make use of
+      # ::value() to determine its final value and update our {Branch} instances
+      # accordingly.
+      branch.commit = commits[i].value() for branch, i in branches
+      return branches
 
   # Public: Reset repo to oid.
   #
