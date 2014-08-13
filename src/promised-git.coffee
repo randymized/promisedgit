@@ -38,6 +38,9 @@ git = require './git-wrapper'
 #       #  3 files changed, 6 insertions(+), 2 deletions(-)
 # ```
 class PromisedGit
+  # Public: Expose bluebird instance as 'Promise' property.
+  Promise: Promise
+
   # Public: Construct a new {PromisedGit} instance.
   #
   # cwd - The path of the git repository as {String}.
