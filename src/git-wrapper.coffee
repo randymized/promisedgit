@@ -19,7 +19,7 @@ class GitWrapper
   # args    - The args to pass as {String}|{Array}.
   # cwd     - The current working directory as {String}.
   #
-  # Returns a Promise that resolves to the git cli output.
+  # Returns: Promise that resolves to the git cli output.
   @cmd: (command, options, args, cwd) ->
     if _.isArray(options) or _.isString(options)
       [args, cwd] = [options, args]

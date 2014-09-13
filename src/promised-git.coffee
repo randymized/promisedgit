@@ -87,7 +87,7 @@ class PromisedGit
 
   # Public: Amend HEAD.
   #
-  # Returns a Promise that resolves to an instance of {Amend}.
+  # Returns: Promise that resolves to an instance of {Amend}.
   amend: ->
     @cmd 'log', {'1': true, format: '%B'}
     .then (amendMessage) => new Amend(amendMessage, this)
@@ -157,7 +157,7 @@ class PromisedGit
   #           :treeish - Set a treeish range, for example `HEAD..HEAD~5`.
   # args    - The args to pass as {String}|{Array}.
   #
-  # Returns a Promise that resolves to the git cli output.
+  # Returns: Promise that resolves to the git cli output.
   cmd: (command, options, args) ->
     if _.isArray(options) or _.isString(options)
       [options, args] = [null, options]
@@ -243,7 +243,7 @@ class PromisedGit
   #
   # maxCount - The maximum amount of tags to return as {Number}.
   #
-  # Returns a Promise that resolves to an {Array} of {Tag}s.
+  # Returns: Promise that resolves to an {Array} of {Tag}s.
   getTags: (maxCount=15) ->
     options =
       format: '%(objectname) %(refname)'
@@ -333,7 +333,7 @@ class PromisedGit
   #
   # oid - The oid to rev-parse as {String}|{Treeish}.
   #
-  # Returns a Promise that resolves to the rev-parsed oid.
+  # Returns: Promise that resolves to the rev-parsed oid.
   revParse: (oid='HEAD', options={}) ->
     if _.isTreeish(oid)
       oid = oid.ref
@@ -387,7 +387,7 @@ class PromisedGit
 
   # Public: Get the repo status.
   #
-  # Returns a Promise resolving to an instance of {Status}.
+  # Returns: Promise resolving to an instance of {Status}.
   status: ->
     options =
       z: true

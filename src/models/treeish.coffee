@@ -37,7 +37,7 @@ class Treeish
   #
   # options - The options as plain {Object}.
   #
-  # Returns a Promise that resolves to an instance of {Diff}.
+  # Returns: Promise that resolves to an instance of {Diff}.
   diff: (options={}) ->
     @repo.cmd('diff', options, "#{@ref}~..#{@ref}")
     .catch => @repo.cmd('diff', options, "#{GIT_ROOT_COMMIT}..#{@ref}")
@@ -48,7 +48,7 @@ class Treeish
   # oid     - The oid to diff against as {String}|{Treeish}.
   # options - The options as plain {Object}.
   #
-  # Returns a Promise that resolves to an instance of {Diff}.
+  # Returns: Promise that resolves to an instance of {Diff}.
   diffTo: (oid='HEAD', options={}) ->
     if _.isTreeish(oid)
       oid = oid.ref
@@ -64,7 +64,7 @@ class Treeish
   # oid     - The oid to diff against as {String}|{Treeish}.
   # options - The options as plain {Object}.
   #
-  # Returns a Promise that resolves to an instance of {Diff}.
+  # Returns: Promise that resolves to an instance of {Diff}.
   diffFrom: (oid='HEAD', options={}) ->
     if _.isTreeish(oid)
       oid = oid.ref
@@ -78,7 +78,7 @@ class Treeish
   #
   # file - The file as {String}.
   #
-  # Returns a Promise that resolves to a {String} with the content of file at
+  # Returns: Promise that resolves to a {String} with the content of file at
   #   this treeish.
   showFile: (file) ->
     return file.show(@ref) if _.isFile(file)
