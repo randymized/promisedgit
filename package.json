@@ -1,6 +1,6 @@
 {
   "name": "promised-git",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Work with git using promises",
   "author": "Maximilian Schüßler <git@mschuessler.org>",
   "main": "lib/promised-git.js",
