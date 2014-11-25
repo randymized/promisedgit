@@ -566,6 +566,18 @@ describe 'Git-Promised', ->
         git.reset(hard: true).then ->
           git.commit('I forgot to add').should.eventually.be.rejected
 
+    describe 'when there are no staged changes', ->
+      it "rejects the promise with git's output available", ->
+        git.reset(hard: true).then ->
+          git.commit('I forgot to add').catch (e)->
+            e.toString().should.contain('untracked files present')
+
+    describe 'when there are no staged changes', ->
+      it "rejects the promise with git's output available in error.stdout", ->
+        git.reset(hard: true).then ->
+          git.commit('I forgot to add').catch (e)->
+            e.stdout.should.contain('untracked files present')
+
   describe '#branches()', ->
     git = null
     beforeEach ->
