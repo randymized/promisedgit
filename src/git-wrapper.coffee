@@ -40,7 +40,9 @@ class GitWrapper
       {cwd: cwd, maxBuffer: 100*1024*1024}, # Options
       (error, stdout, stderr) ->            # Callback
         if error
-          error.message = stderr
+          error.message = stderr || stdout
+          error.stderr = stderr
+          error.stdout = stdout
           reject(error)
         else
           resolve stdout
